@@ -1873,4 +1873,54 @@ var thisBpm,
       SampleBank.init(urls, this.onLoad.bind(this))
     }
   }
+
+var SCALE_TOGGLE_KEY = 'drum_scale_to_fit'
+
+function scaleToFit() {
+  if (localStorage.getItem(SCALE_TOGGLE_KEY) !== 'true') return
+  var grid = document.querySelector('.grid-container')
+  var wrapper = document.querySelector('.wrapper')
+  if (!grid || !wrapper) return
+  grid.style.transform = 'scale(1)'
+  var naturalW = grid.offsetWidth
+  var naturalH = grid.offsetHeight
+  if (naturalW === 0 || naturalH === 0) return
+  var pad = 20
+  var availW = window.innerWidth - pad * 2
+  var availH = window.innerHeight - pad * 2
+  var scale = Math.min(availW / naturalW, availH / naturalH)
+  grid.style.transform = 'scale(' + scale + ')'
+}
+
+function resetScale() {
+  var grid = document.querySelector('.grid-container')
+  if (grid) grid.style.transform = ''
+}
+
+$(document).on('click', '.scale-toggle', function () {
+  var enabled = localStorage.getItem(SCALE_TOGGLE_KEY) !== 'true'
+  localStorage.setItem(SCALE_TOGGLE_KEY, enabled)
+  $(this).toggleClass('active', enabled)
+  if (enabled) { scaleToFit() } else { resetScale() }
+})
+
+var resizeTimer
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer)
+  resizeTimer = setTimeout(scaleToFit, 100)
+})
+
+App.onLoad = (function (orig) {
+  return function () {
+    orig.call(this)
+    if (localStorage.getItem(SCALE_TOGGLE_KEY) === 'true') {
+      $('.scale-toggle').addClass('active')
+      setTimeout(scaleToFit, 50)
+    }
+  }
+})(App.onLoad)
+
+dispatcher.on('sequencer:setsteps', scaleToFit)
+dispatcher.on('sequencer:settPatternFromTact', function () { setTimeout(scaleToFit, 50) })
+
 App.init()
