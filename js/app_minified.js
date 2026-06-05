@@ -1,5 +1,5 @@
 function generateURL() {
-  function encodeSequence(sequence) {
+  function e(e) {
     var t = '',
       n = '',
       i = 'abcdefghijklmnop',
@@ -14,8 +14,8 @@ function generateURL() {
         lilletromme: 6,
         stortromme: 7
       }
-    for (var a in sequence) {
-      for (var o = sequence[a], l = '', c = '', d = 0, h = 0; h < o.length; h++) {
+    for (var a in e) {
+      for (var o = e[a], l = '', c = '', d = 0, h = 0; h < o.length; h++) {
         var m = parseInt(o[h])
         1 === m
           ? ((l += i[h]), d++)
@@ -25,12 +25,12 @@ function generateURL() {
     }
     return t + '-' + n
   }
-  function encodeMuted(muted) {
+  function t(e) {
     var t = ''
-    for (var n in muted) t += n
+    for (var n in e) t += n
     return t
   }
-  function encodeSound(sound) {
+  function n(e) {
     var t = {
       standard: 'a',
       powerful: 'b',
@@ -39,48 +39,47 @@ function generateURL() {
       minimalistic: 'e',
       energetic: 'f'
     }
-    return t[sound]
+    return t[e]
   }
   var i = ''
     ; (i += url_collection.tempo + '-'),
       (i += numSteps + '-'),
       (i += url_collection.swing ? 'y' : 'n'),
       (i += '-' + url_collection.rhythm.replace('/', '')),
-      (i += '-' + encodeSound(url_collection.sound)),
-      (i += '-' + encodeMuted(url_collection.muted)),
-      (i += '-' + encodeSequence(url_collection.sequence))
-  var fi = encodeSequence(url_collection.fillSequence || url_collection.sequence)
-  window.history.pushState('', '', '?data=' + i + '&data_fill=' + fi)
+      (i += '-' + n(url_collection.sound)),
+      (i += '-' + t(url_collection.muted)),
+      (i += '-' + e(url_collection.sequence))
+  window.history.pushState('', '', '?data=' + i)
 }
-function decodeURL(data, fillData) {
-  function decodePart(part, alphabet, value, steps, result, channelMap) {
-    var a = part.split(/(?=\d)/) || []
-    a.forEach(function (chunk) {
+function decodeURL(e) {
+  function t(e, t, n, i, r, s) {
+    var a = e.split(/(?=\d)/) || []
+    a.forEach(function (e) {
       for (
-        var ch = chunk[0], rest = chunk.slice(1), l = Array(steps).fill(0), c = 0;
-        c < rest.length;
+        var a = e[0], o = e.slice(1), l = Array(i).fill(0), c = 0;
+        c < o.length;
         c++
       ) {
-        var pos = alphabet.indexOf(rest[c])
-        pos >= -1 && (l[pos] = value)
+        var d = t.indexOf(o[c])
+        d >= -1 && (l[d] = n)
       }
-      result[channelMap[ch]].forEach(function (val, idx) {
-        result[channelMap[ch]][idx] += l[idx]
+      r[s[a]].forEach(function (e, t) {
+        r[s[a]][t] += l[t]
       })
     })
   }
-  function decodeSequence(normalPart, accentPart, steps) {
-    var result = {
-      hihatfod: Array(steps).fill(0),
-      sidetamlys: Array(steps).fill(0),
-      gulvtam: Array(steps).fill(0),
-      ride: Array(steps).fill(0),
-      crash: Array(steps).fill(0),
-      hihat: Array(steps).fill(0),
-      lilletromme: Array(steps).fill(0),
-      stortromme: Array(steps).fill(0)
+  function n(e, n, i) {
+    var r = {
+      hihatfod: Array(i).fill(0),
+      sidetamlys: Array(i).fill(0),
+      gulvtam: Array(i).fill(0),
+      ride: Array(i).fill(0),
+      crash: Array(i).fill(0),
+      hihat: Array(i).fill(0),
+      lilletromme: Array(i).fill(0),
+      stortromme: Array(i).fill(0)
     },
-      channelMap = {
+      s = {
         1: 'hihatfod',
         2: 'sidetamlys',
         3: 'gulvtam',
@@ -90,17 +89,17 @@ function decodeURL(data, fillData) {
         6: 'lilletromme',
         7: 'stortromme'
       },
-      normalAlphabet = 'abcdefghijklmnop',
-      accentAlphabet = 'qrstuvwxyzabcdef'
-    normalPart && decodePart(normalPart, normalAlphabet, 1, steps, result, channelMap), accentPart && decodePart(accentPart, accentAlphabet, 2, steps, result, channelMap)
-    for (var channel in result) result[channel] = result[channel].join('')
-    return result
+      a = 'abcdefghijklmnop',
+      o = 'qrstuvwxyzabcdef'
+    e && t(e, a, 1, i, r, s), n && t(n, o, 2, i, r, s)
+    for (var l in r) r[l] = r[l].join('')
+    return r
   }
-  function decodeMuted(mutedStr) {
-    for (var muted = {}, n = 0; n < mutedStr.length; n++) muted[mutedStr[n]] = !0
-    return muted
+  function i(e) {
+    for (var t = {}, n = 0; n < e.length; n++) t[e[n]] = !0
+    return t
   }
-  function decodeSound(letter) {
+  function r(e) {
     var t = {
       a: 'standard',
       b: 'powerful',
@@ -109,10 +108,10 @@ function decodeURL(data, fillData) {
       e: 'minimalistic',
       f: 'energetic'
     }
-    return t[letter]
+    return t[e]
   }
-  function getStepsFromRhythm(rhythm) {
-    switch (rhythm) {
+  function s(e) {
+    switch (e) {
       case '44':
         return 16
       case '34':
@@ -125,52 +124,37 @@ function decodeURL(data, fillData) {
         return 16
     }
   }
-  var parts = data.split('-'),
-    result = {}
-  if (parts[1] === 'y' || parts[1] === 'n') {
-    result.tempo = parseInt(parts[0])
-    result.steps = getStepsFromRhythm(parts[2])
-    result.swing = 'y' === parts[1]
-    result.rhythm = parts[2].split('').join('/')
-    result.sound = decodeSound(parts[3])
-    result.muted = decodeMuted(parts[4])
-      result.sequence = decodeSequence(parts[5], parts[6], getStepsFromRhythm(parts[2]))
-      if (fillData) {
-        var fp = fillData.split('-')
-        result.fillSequence = decodeSequence(fp[0], fp[1], getStepsFromRhythm(parts[2]))
-      }
-    } else {
-      result.tempo = parseInt(parts[0])
-      result.steps = parseInt(parts[1], 10) || 16
-      result.swing = 'y' === parts[2]
-      result.rhythm = parts[3].split('').join('/')
-      result.sound = decodeSound(parts[4])
-      result.muted = decodeMuted(parts[5])
-      result.sequence = decodeSequence(parts[6], parts[7], result.steps)
-      if (fillData) {
-        var fp = fillData.split('-')
-        result.fillSequence = decodeSequence(fp[0], fp[1], result.steps)
-      }
-    }
-    if (!result.fillSequence) {
-      result.fillSequence = {}
-      for (var ch in result.sequence) result.fillSequence[ch] = result.sequence[ch]
-    }
-    result.fillActive = !1
-    return result
+  var a = e.split('-'),
+    o = {}
+  if (a[1] === 'y' || a[1] === 'n') {
+    o.tempo = parseInt(a[0])
+    o.steps = s(a[2])
+    o.swing = 'y' === a[1]
+    o.rhythm = a[2].split('').join('/')
+    o.sound = r(a[3])
+    o.muted = i(a[4])
+    o.sequence = n(a[5], a[6], s(a[2]))
+  } else {
+    o.tempo = parseInt(a[0])
+    o.steps = parseInt(a[1], 10) || 16
+    o.swing = 'y' === a[2]
+    o.rhythm = a[3].split('').join('/')
+    o.sound = r(a[4])
+    o.muted = i(a[5])
+    o.sequence = n(a[6], a[7], o.steps)
+  }
+  return o
 }
 function parseURLData() {
   var e = new URL(window.location.href),
-    t = e.searchParams.get('data'),
-    fd = e.searchParams.get('data_fill')
+    t = e.searchParams.get('data')
   if (!t) return null
-  var n = decodeURIComponent(t),
-    fillData = fd ? decodeURIComponent(fd) : null
+  var n = decodeURIComponent(t)
   return n.includes('-') && n.includes('"')
     ? decodeOldURL(n)
     : n.includes('"')
       ? null
-      : decodeURL(n, fillData)
+      : decodeURL(n)
 }
 function resetURL() {
   window.history.pushState('', '', window.location.pathname)
@@ -192,16 +176,6 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       lilletromme: '',
       stortromme: ''
     },
-    fillSequence: {
-      hihatfod: '',
-      sidetamlys: '',
-      gulvtam: '',
-      ride: '',
-      hihat: '',
-      lilletromme: '',
-      stortromme: ''
-    },
-    fillActive: !1,
     muted: {},
     rhythm: '4/4',
     tempo: 90,
@@ -211,65 +185,65 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
   dispatcher = _.extend(
     {
       EventKeys: {},
-      register: function (eventKeys) {
-        for (var key in eventKeys) {
-          if (key in this.EventKeys)
-            throw 'Dispatcher error: duplicate event key: ' + key
-          this.EventKeys[key] = eventKeys[key]
+      register: function (e) {
+        for (var t in e) {
+          if (t in this.EventKeys)
+            throw 'Dispatcher error: duplicate event key: ' + t
+          this.EventKeys[t] = e[t]
         }
       }
     },
     Backbone.Events
   ),
-  SampleBank = (function (ctx) {
-    function init(samples, callback) {
-      for (var key in samples) totalCount++
-      for (var key in samples) loadSample(key, samples[key])
-      defaultCallback = callback
+  SampleBank = (function (e) {
+    function t(e, t) {
+      for (var i in e) c++
+      for (var i in e) r(i, e[i])
+      n = t
     }
-    function defaultCallback() {
+    function n() {
       console.warn('Need to pass a callback to load()')
     }
-    function onDecode(key, buffer) {
-      return buffer
-        ? ((sampleBuffers[key] = buffer), void (++loadedCount == totalCount && defaultCallback()))
+    function i(e, t) {
+      return t
+        ? ((o[e] = t), void (++l == c && n()))
         : void console.error('Unable to decode audio data', url)
     }
-    function loadSample(key, url) {
-      var req = new XMLHttpRequest()
-        ; (req.responseType = 'arraybuffer'),
-          (req.onload = function () {
-            ctx.decodeAudioData(
-              req.response,
-              function (buffer) {
-                onDecode(key, buffer)
+    function r(t, n) {
+      var r = new XMLHttpRequest()
+        ; (r.responseType = 'arraybuffer'),
+          (r.onload = function () {
+            e.decodeAudioData(
+              r.response,
+              function (e) {
+                i(t, e)
               },
-              function (err) {
-                console.error('Unable to decode audio data', err)
+              function (e) {
+                console.error('Unable to decode audio data', e)
               }
             )
           }),
-          (req.onerror = function (err) {
-            console.error('Error loading sample data', key, url, err)
+          (r.onerror = function (e) {
+            console.error('Error loading sample data', t, n, e)
           }),
-          req.open('GET', url, !0),
-          req.send()
+          r.open('GET', n, !0),
+          r.send()
     }
-    function loadNew(samples, callback) {
-      ; (sampleBuffers = {}), (loadedCount = 0), (totalCount = 0), init(samples, callback)
+    function s(e, n) {
+      ; (o = {}), (l = 0), (c = 0), t(e, n)
     }
-    function play(key, when) {
-      var source = ctx.createBufferSource()
-      source.buffer = sampleBuffers[key]
-      var gainNode = gains[key] || masterGain
-      source.connect(gainNode)
-      source.start(when || 0)
+    function a(t, n) {
+      var i = e.createBufferSource()
+      i.buffer = o[t]
+      var g = gains[t] || masterGain
+      i.connect(g)
+      i.start(n || 0)
     }
-    var masterGain = ctx.createGain()
+    var masterGain = e.createGain()
     var gains = {}
     function initGains(channels) {
       for (var i in channels) {
-        var g = ctx.createGain()
+        var g = e.createGain()
         g.connect(masterGain)
         g.gain.value = 1
         gains[channels[i]] = g
@@ -288,38 +262,38 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       return masterGain.gain.value
     }
     function getMasterNode() { return masterGain }
-    var sampleBuffers = {},
-      loadedCount = 0,
-      totalCount = 0,
-      api = { play: play, init: init, loadNew: loadNew, initGains: initGains, setGain: setGain, setMasterGain: setMasterGain, getGain: getGain, getMasterGain: getMasterGain, getMasterNode: getMasterNode }
-    return api
+    var o = {},
+      l = 0,
+      c = 0,
+      d = { play: a, init: t, loadNew: s, initGains: initGains, setGain: setGain, setMasterGain: setMasterGain, getGain: getGain, getMasterGain: getMasterGain, getMasterNode: getMasterNode }
+    return d
   })(AUDIO),
-  AudioFX = (function (ctx, sampleBank) {
-    var masterNode = sampleBank.getMasterNode()
+  AudioFX = (function (e, sb) {
+    var m = sb.getMasterNode()
 
     // EQ chain (on main path)
-    var bassF = ctx.createBiquadFilter()
+    var bassF = e.createBiquadFilter()
     bassF.type = 'lowshelf'
     bassF.frequency.value = 200
     bassF.gain.value = 0
-    var midF = ctx.createBiquadFilter()
+    var midF = e.createBiquadFilter()
     midF.type = 'peaking'
     midF.frequency.value = 1000
     midF.gain.value = 0
     midF.Q.value = 1
-    var trebleF = ctx.createBiquadFilter()
+    var trebleF = e.createBiquadFilter()
     trebleF.type = 'highshelf'
     trebleF.frequency.value = 5000
     trebleF.gain.value = 0
-    var lpF = ctx.createBiquadFilter()
+    var lpF = e.createBiquadFilter()
     lpF.type = 'lowpass'
     lpF.frequency.value = 22050
-    var hpF = ctx.createBiquadFilter()
+    var hpF = e.createBiquadFilter()
     hpF.type = 'highpass'
     hpF.frequency.value = 20
 
     // Connect main EQ chain
-    masterNode.connect(bassF)
+    m.connect(bassF)
     bassF.connect(midF)
     midF.connect(trebleF)
 
@@ -328,17 +302,17 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
     lpF.connect(hpF)
 
     // Main dry signal (always passes through EQ+filter)
-    var mainDry = ctx.createGain()
+    var mainDry = e.createGain()
     mainDry.gain.value = 1
     hpF.connect(mainDry)
-    mainDry.connect(ctx.destination)
+    mainDry.connect(e.destination)
 
     // Reverb (parallel send from after HP)
-    var revG = ctx.createGain()
+    var revG = e.createGain()
     revG.gain.value = 0
-    var convolver = ctx.createConvolver()
-    var revLen = ctx.sampleRate * 2
-    var revBuf = ctx.createBuffer(2, revLen, ctx.sampleRate)
+    var convolver = e.createConvolver()
+    var revLen = e.sampleRate * 2
+    var revBuf = e.createBuffer(2, revLen, e.sampleRate)
     for (var ch = 0; ch < 2; ch++) {
       var data = revBuf.getChannelData(ch)
       for (var i = 0; i < revLen; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / revLen, 3)
@@ -346,44 +320,44 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
     convolver.buffer = revBuf
     hpF.connect(revG)
     revG.connect(convolver)
-    convolver.connect(ctx.destination)
+    convolver.connect(e.destination)
 
     // Chorus (parallel send from after HP)
-    var chG = ctx.createGain()
+    var chG = e.createGain()
     chG.gain.value = 0
-    var chDelay = ctx.createDelay(0.05)
+    var chDelay = e.createDelay(0.05)
     chDelay.delayTime.value = 0.005
-    var chOsc = ctx.createOscillator()
+    var chOsc = e.createOscillator()
     chOsc.frequency.value = 1.3
-    var chOscG = ctx.createGain()
+    var chOscG = e.createGain()
     chOscG.gain.value = 0.003
     chOsc.connect(chOscG)
     chOscG.connect(chDelay.delayTime)
     chOsc.start()
     hpF.connect(chDelay)
     chDelay.connect(chG)
-    chG.connect(ctx.destination)
+    chG.connect(e.destination)
 
     // Delay (parallel send)
-    var dG = ctx.createGain()
+    var dG = e.createGain()
     dG.gain.value = 0
-    var dDelay = ctx.createDelay(3)
+    var dDelay = e.createDelay(3)
     dDelay.delayTime.value = 0.35
-    var dFb = ctx.createGain()
+    var dFb = e.createGain()
     dFb.gain.value = 0
     hpF.connect(dDelay)
     dDelay.connect(dFb)
     dFb.connect(dDelay)
     dDelay.connect(dG)
-    dG.connect(ctx.destination)
+    dG.connect(e.destination)
 
     return {
       getBass: function () { return bassF.gain.value },
-      setBass: function (value) { bassF.gain.value = value },
+      setBass: function (v) { bassF.gain.value = v },
       getMid: function () { return midF.gain.value },
-      setMid: function (value) { midF.gain.value = value },
+      setMid: function (v) { midF.gain.value = v },
       getTreble: function () { return trebleF.gain.value },
-      setTreble: function (value) { trebleF.gain.value = value },
+      setTreble: function (v) { trebleF.gain.value = v },
       getFilterSlider: function () {
         var lp = lpF.frequency.value, hp = hpF.frequency.value
         if (hp < 100) {
@@ -394,107 +368,102 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
           return 0.5 + normalized * 0.5
         }
       },
-      setFilterSlider: function (value) {
-        if (value < 0.5) {
+      setFilterSlider: function (v) {
+        if (v < 0.5) {
           hpF.frequency.value = 20
-          var normalized = value / 0.5
+          var normalized = v / 0.5
           lpF.frequency.value = Math.max(20, 20 * Math.pow(22050 / 20, normalized))
         } else {
           lpF.frequency.value = 22050
-          var normalized = (value - 0.5) / 0.5
+          var normalized = (v - 0.5) / 0.5
           hpF.frequency.value = Math.min(22050, 20 * Math.pow(22050 / 20, normalized))
         }
       },
       getReverbMix: function () { return revG.gain.value },
-      setReverbMix: function (value) { revG.gain.value = value },
+      setReverbMix: function (v) { revG.gain.value = v },
       getChorus: function () { return chG.gain.value },
-      setChorus: function (value) { chG.gain.value = value },
+      setChorus: function (v) { chG.gain.value = v },
       getDelayTime: function () { return dDelay.delayTime.value },
-      setDelayTime: function (value) { dDelay.delayTime.value = value },
+      setDelayTime: function (v) { dDelay.delayTime.value = v },
       getDelayFeedback: function () { return dFb.gain.value },
-      setDelayFeedback: function (value) { dFb.gain.value = value },
+      setDelayFeedback: function (v) { dFb.gain.value = v },
       getDelayMix: function () { return dG.gain.value },
-      setDelayMix: function (value) { dG.gain.value = value }
+      setDelayMix: function (v) { dG.gain.value = v }
     }
   })(AUDIO, SampleBank),
-  Sequencer = (function (ctx, sampleBank) {
-    function setTempo(bpm) {
-      ; (thisBpm = bpm),
-        (interval = 60 / thisBpm / 4),
+  Sequencer = (function (e, t) {
+    function n(e) {
+      ; (p = e),
+        (g = 60 / p / 4),
         currentPatternForSwing &&
-        (interval =
+        (g =
           '5/4' == currentPatternForSwing.rhythm ||
             '6/8' == currentPatternForSwing.rhythm
-            ? 60 / thisBpm / 2.000000000000002
-            : 60 / thisBpm / 4)
+            ? 60 / p / 2.000000000000002
+            : 60 / p / 4)
     }
-    function scheduleLoop() {
-      if (!isPlaying) return !1
-      var elapsed = ctx.currentTime
-      if (((elapsed -= startOffset), 0 === ctx.currentTime && (nextEventTime -= startOffset), nextEventTime < elapsed + 0.2)) {
-        var scheduleTime = nextEventTime + startOffset
-        playStep(scheduleTime), advanceStep()
+    function i() {
+      if (!w) return !1
+      var t = e.currentTime
+      if (((t -= E), 0 === e.currentTime && (v -= E), v < t + 0.2)) {
+        var n = v + E
+        o(n), r()
       }
-      timerId = setTimeout(scheduleLoop, 0)
+      f = setTimeout(i, 0)
     }
-    function advanceStep() {
-      currentStep++
-      var patternLen = currentPattern.hihat.length
-      currentStep >= patternLen && (currentStep = 0), (nextEventTime += interval)
+    function r() {
+      _++
+      var e = S.hihat.length
+      _ >= e && (_ = 0), (v += g)
     }
-    function playNote(channel, time) {
-      var noteVal = currentPattern[channel][currentStep]
-      '1' === noteVal
-        ? (sampleBank.play(channel, time),
-          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_NOTE_PLAY, channel))
-        : '2' === noteVal && playAccent(channel, time)
+    function s(e, n) {
+      var i = S[e][_]
+      '1' === i
+        ? (t.play(e, n),
+          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_NOTE_PLAY, e))
+        : '2' === i && a(e, n)
     }
-    function playAccent(channel, time) {
-      var accentMap = {
+    function a(e, n) {
+      var i = {
         hihat: 'aabenhihat',
         sidetamlys: 'sidetamdyb',
         lilletromme: 'kantslag'
       }
-      accentMap[channel] &&
-        (sampleBank.play(accentMap[channel], time),
-          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_NOTE_PLAY, channel))
+      i[e] &&
+        (t.play(i[e], n),
+          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_NOTE_PLAY, e))
     }
-    function playStep(time) {
-      function applySwing(rhythm) {
-        '4/4' === rhythm || '3/4' === rhythm ? swingQuadruple() : ('5/4' !== rhythm && '6/8' !== rhythm) || swingCompound(),
-          currentStep >= stepsPerBeat + 1 && (currentStep = 0)
+    function o(e) {
+      function t(e) {
+        '4/4' === e || '3/4' === e ? n() : ('5/4' !== e && '6/8' !== e) || i(),
+          _ >= a + 1 && (_ = 0)
       }
-      function swingQuadruple() {
-        currentStep % 4 === 3 && (currentStep = 15 === currentStep ? 0 : currentStep + 1),
-          '3/4' === rhythmStr && 12 === currentStep && currentStep++
+      function n() {
+        _ % 4 === 3 && (_ = 15 === _ ? 0 : _ + 1),
+          '3/4' === r && 12 === _ && _++
       }
-      function swingCompound() {
-        currentStep % 2 === 0 && (nextEventTime += interval / 6)
+      function i() {
+        _ % 2 === 0 && (v += g / 6)
       }
-      var rhythmStr = currentPatternForSwing.rhythm,
-        stepsPerBeat = currentPattern.hihat.length
-      for (var channel in currentPattern)
-        activeChannels[channel] && swing_toggler && applySwing(rhythmStr),
-          activeChannels[channel] && playNote(channel, time),
-          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_STEP, currentStep)
+      var r = currentPatternForSwing.rhythm,
+        a = S.hihat.length
+      for (var o in S)
+        P[o] && swing_toggler && t(r),
+          P[o] && s(o, e),
+          dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_STEP, _)
     }
-    function play(pattern, times) {
-      if (!initialized) throw 'Sequencer not initialized'
-      null === currentPattern && initPattern(pattern),
-        void 0 === times && (times = 1),
-        times === -1 && (times = Number.MAX_INT),
-        startScheduling()
+    function l(e, t) {
+      if (!y) throw 'Sequencer not initialized'
+      null === S && c(e),
+        void 0 === t && (t = 1),
+        t === -1 && (t = Number.MAX_INT),
+        h()
     }
-    function initPattern(patternData) {
-      currentPattern = {}
-      if (!patternData.fillSequence) {
-        patternData.fillSequence = {}
-        for (var ch in patternData.sequence) patternData.fillSequence[ch] = patternData.sequence[ch]
-      }
-      var src = url_collection.fillActive ? patternData.fillSequence : patternData.sequence
-      for (var key in src) {
-        var arr = stringToArray(src[key])
-        currentPattern[key] = arr
+    function c(e) {
+      S = {}
+      for (var t in e.sequence) {
+        var n = d(e.sequence[t])
+        S[t] = n
       }
       var stepsEl = $('.transport-steps-display')
       if (stepsEl.length) {
@@ -505,42 +474,42 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       var knownChannels = Object.keys(TRANSLATION.patternName)
       for (var ci in knownChannels) {
         var ch = knownChannels[ci]
-        if (!currentPattern[ch]) {
-          currentPattern[ch] = []
-          for (var j = 0; j < numSteps; j++) currentPattern[ch].push('0')
+        if (!S[ch]) {
+          S[ch] = []
+          for (var j = 0; j < numSteps; j++) S[ch].push('0')
         }
       }
-      for (var ch in currentPattern) {
-        var cur = currentPattern[ch].length
+      for (var ch in S) {
+        var cur = S[ch].length
         if (cur < numSteps) {
-          for (var j = cur; j < numSteps; j++) currentPattern[ch].push('0')
+          for (var j = cur; j < numSteps; j++) S[ch].push('0')
         } else if (cur > numSteps) {
-          currentPattern[ch].splice(numSteps)
+          S[ch].splice(numSteps)
         }
       }
     }
-    function stringToArray(str) {
-      return str.split('')
+    function d(e) {
+      return e.split('')
     }
-    function startScheduling() {
-      ; (isPlaying = !0), (nextEventTime = 0), (startOffset = ctx.currentTime + 0.005), scheduleLoop()
+    function h() {
+      ; (w = !0), (v = 0), (E = e.currentTime + 0.005), i()
     }
-    function stop() {
-      ; (isPlaying = !1),
-        (currentStep = 0),
+    function m() {
+      ; (w = !1),
+        (_ = 0),
         $('#play').removeClass('btn-pause').addClass('btn-play').html('<i class="fas fa-play"></i>'),
-        dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_STEP, currentStep)
+        dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_STEP, _)
     }
-    function init(options) {
-      dispatcher.register(eventKeys), new SequencerView(options).render(), setTempo(90), (initialized = !0)
+    function u(e) {
+      dispatcher.register(T), new A(e).render(), n(90), (y = !0)
     }
-var thisBpm,
-  interval,
-  nextEventTime,
-  startOffset,
-  timerId,
+var p,
+  g,
+  v,
+  E,
+  f,
   numSteps = 16,
-  eventKeys = {
+  T = {
         SEQUENCER_PLAY: 'sequencer:play',
         SEQUENCER_STOP: 'sequencer:stop',
         SEQUENCER_SET_PATTERN: 'sequencer:setpattern',
@@ -549,20 +518,19 @@ var thisBpm,
         SEQUENCER_PATTERN_CHANGED: 'sequencer:patternchanged',
         SEQUENCER_STEP: 'sequencer:step',
         SEQUENCER_NOTE_PLAY: 'sequencer:noteplay',
-        SEQUENCER_SET_STEPS: 'sequencer:setsteps',
-        SEQUENCER_SET_FILL: 'sequencer:setfill'
+        SEQUENCER_SET_STEPS: 'sequencer:setsteps'
       },
-      initialized = !1,
-      currentStep = 0,
-      isPlaying = !1,
-      currentPattern = null,
-      activeChannels = {},
-      noteState = {},
-      mutedChannels = {},
-      SequencerView = Backbone.View.extend({
+      y = !1,
+      _ = 0,
+      w = !1,
+      S = null,
+      P = {},
+      R = {},
+      N = {},
+      A = Backbone.View.extend({
         channelViews: {},
-        initialize: function (options) {
-          this.listenTo(dispatcher, dispatcher.EventKeys.SEQUENCER_PLAY, play),
+        initialize: function (e) {
+          this.listenTo(dispatcher, dispatcher.EventKeys.SEQUENCER_PLAY, l),
             this.listenTo(
               dispatcher,
               dispatcher.EventKeys.SEQUENCER_STOP,
@@ -581,7 +549,7 @@ var thisBpm,
             this.listenTo(
               dispatcher,
               dispatcher.EventKeys.SEQUENCER_SET_TEMPO,
-              setTempo
+              n
             ),
             this.listenTo(
               dispatcher,
@@ -597,93 +565,67 @@ var thisBpm,
               dispatcher,
               dispatcher.EventKeys.SEQUENCER_SET_STEPS,
               this.onSetSteps
-            ),
-            this.listenTo(
-              dispatcher,
-              dispatcher.EventKeys.SEQUENCER_SET_FILL,
-              this.setFill
             )
-        },
-        setFill: function () {
-          if (!currentPatternForSwing) return
-          initPattern(currentPatternForSwing)
-          for (var ch in this.channelViews) {
-            this.channelViews[ch].model = currentPattern[ch]
-            this.channelViews[ch].render()
-          }
-          $('#fill-in-button').toggleClass('fill-active', url_collection.fillActive)
-          generateURL()
         },
         onSetSteps: function (newSteps) {
           if (newSteps < 1) newSteps = 1
           if (newSteps > 64) newSteps = 64
           numSteps = newSteps
-          for (var ch in currentPattern) {
-            var cur = currentPattern[ch].length
+          for (var ch in S) {
+            var cur = S[ch].length
             if (cur < numSteps) {
-              for (var j = cur; j < numSteps; j++) currentPattern[ch].push('0')
+              for (var j = cur; j < numSteps; j++) S[ch].push('0')
             } else if (cur > numSteps) {
-              currentPattern[ch].splice(numSteps)
+              S[ch].splice(numSteps)
             }
           }
-          for (var ch in currentPattern)
-            url_collection.sequence[ch] = currentPattern[ch].join('')
-          for (var ch in url_collection.fillSequence) {
-            var cur = url_collection.fillSequence[ch].length
-            if (cur < numSteps) {
-              for (var j = cur; j < numSteps; j++) url_collection.fillSequence[ch] += '0'
-            } else if (cur > numSteps) {
-              url_collection.fillSequence[ch] = url_collection.fillSequence[ch].substring(0, numSteps)
-            }
-          }
+          for (var ch in S)
+            url_collection.sequence[ch] = S[ch].join('')
           for (var ch in this.channelViews) {
-            this.channelViews[ch].model = currentPattern[ch]
+            this.channelViews[ch].model = S[ch]
             this.channelViews[ch].render()
           }
           generateURL()
         },
-        settPatternFromTact: function (patternData) {
-          $('#fill-in-button').removeClass('fill-active')
-          initPattern(patternData), this.render(), (currentPatternForSwing = patternData), (noteState = {})
-          for (var ch in this.channelViews) {
-            this.channelViews[ch].undelegateEvents()
-            this.channelViews[ch].stopListening()
+        settPatternFromTact: function (e) {
+          c(e), this.render(), (currentPatternForSwing = e), (R = {})
+          for (var t in this.channelViews) {
+            this.channelViews[t].undelegateEvents()
+            this.channelViews[t].stopListening()
           }
           this.channelViews = {}
-          for (var ch in currentPattern) {
-            var el = this.$el.find('.channel[data-inst="' + ch + '"]')
-            this.channelViews[ch] = new ChannelView({
-              channel: ch,
-              model: currentPattern[ch],
-              el: el,
-              pattern_name: TRANSLATION.patternName[ch],
-              muted: patternData.muted[ch],
-              rhythm: patternData.rhythm
+          for (var t in S) {
+            var n = this.$el.find('.channel[data-inst="' + t + '"]')
+            this.channelViews[t] = new O({
+              channel: t,
+              model: S[t],
+              el: n,
+              pattern_name: TRANSLATION.patternName[t],
+              muted: e.muted[t],
+              rhythm: e.rhythm
             })
           }
           this.renderChannels()
         },
-        setPattern: function (patternData) {
-          url_collection.fillActive = !1
-          $('#fill-in-button').removeClass('fill-active')
-          initPattern(patternData), this.render(), (currentPatternForSwing = patternData)
-          var idx = 0
-          for (var ch in this.channelViews) {
-            this.channelViews[ch].undelegateEvents()
-            this.channelViews[ch].stopListening()
+        setPattern: function (e) {
+          c(e), this.render(), (currentPatternForSwing = e)
+          var t = 0
+          for (var n in this.channelViews) {
+            this.channelViews[n].undelegateEvents()
+            this.channelViews[n].stopListening()
           }
           this.channelViews = {}
-          for (var ch in currentPattern) {
-            var el = this.$el.find('.channel[data-inst="' + ch + '"]')
-              ; (this.channelViews[ch] = new ChannelView({
-                channel: ch,
-                model: currentPattern[ch],
-                el: el,
-                pattern_name: TRANSLATION.patternName[ch],
-                muted: patternData.muted[idx],
-                rhythm: patternData.rhythm
+          for (var n in S) {
+            var i = this.$el.find('.channel[data-inst="' + n + '"]')
+              ; (this.channelViews[n] = new O({
+                channel: n,
+                model: S[n],
+                el: i,
+                pattern_name: TRANSLATION.patternName[n],
+                muted: e.muted[t],
+                rhythm: e.rhythm
               })),
-                idx++
+                t++
           }
           this.renderChannels(), generateURL()
         },
@@ -692,18 +634,18 @@ var thisBpm,
         },
         renderChannels: function () {
           this.$channelContainer = this.$el.find('.sequencer-channels')
-          for (var ch in this.channelViews) this.channelViews[ch].render()
+          for (var e in this.channelViews) this.channelViews[e].render()
           this.$steps = $('.channel span')
         },
-        setPlayhead: function (step) {
-          for (var ch in this.channelViews) this.channelViews[ch].setPlayhead(step)
+        setPlayhead: function (e) {
+          for (var t in this.channelViews) this.channelViews[t].setPlayhead(e)
         },
         stop: function () {
-          stop()
-          for (var ch in this.channelViews) this.channelViews[ch].clearPlayhead()
+          m()
+          for (var e in this.channelViews) this.channelViews[e].clearPlayhead()
         }
       }),
-      ChannelView = Backbone.View.extend({
+      O = Backbone.View.extend({
         events: {
           'click .seq-row span': 'onNoteClick',
           'click .pad': 'onPadClick',
@@ -711,11 +653,11 @@ var thisBpm,
         },
         channel: null,
         active: !0,
-        initialize: function (options) {
-          ; (this.channel = options.channel),
-            (this.pattern_name = options.pattern_name),
-            (this.muted = options.muted),
-            (this.rhythm = options.rhythm)
+        initialize: function (e) {
+          ; (this.channel = e.channel),
+            (this.pattern_name = e.pattern_name),
+            (this.muted = e.muted),
+            (this.rhythm = e.rhythm)
         },
         render: function () {
           var notesHtml = ''
@@ -725,46 +667,46 @@ var thisBpm,
           this.$notes = this.$el.find('.seq-row span'),
             (this.$eq_bar = this.$el.find('.meter span')),
             (this.$active = this.$el.find('.mute'))
-          var self = this,
-            measureNum = 1
+          var t = this,
+            n = 1
           return (
-            this.model.forEach(function (note, idx) {
-              var noteEl = self.$notes.eq(idx)
-              '1' === note
-                ? (noteEl.addClass('seq-note'),
-                  (noteState[self.el.dataset.count + ':' + idx] =
-                    self.el.dataset.count + '.' + idx + '.' + note))
-                : ('2' === note && 'hihat' == self.channel) ||
-                  ('2' === note && 'sidetamlys' == self.channel) ||
-                  ('2' === note && 'lilletromme' == self.channel)
-                  ? (noteEl.addClass('seq-note-yellow'),
-                    (noteState[self.el.dataset.count + ':' + idx] =
-                      self.el.dataset.count + '.' + idx + '.' + note))
-                  : '3' === note
-                    ? noteEl.addClass('seq-note-empty')
-                    : delete noteState[self.el.dataset.count + ':' + idx],
-                '4/4' == self.rhythm || '3/4' == self.rhythm
-                  ? (idx % 4 === 0 &&
-                    noteEl.addClass('seq-step-measure').html(idx / 4 + 1),
-                    swing_toggler && idx % 4 === 3 && noteEl.hide())
-                  : ('5/4' != self.rhythm && '6/8' != self.rhythm) ||
-                  (idx % 2 === 0 && noteEl.addClass('seq-step-measure').html(measureNum++))
+            this.model.forEach(function (e, i) {
+              var r = t.$notes.eq(i)
+              '1' === e
+                ? (r.addClass('seq-note'),
+                  (R[t.el.dataset.count + ':' + i] =
+                    t.el.dataset.count + '.' + i + '.' + e))
+                : ('2' === e && 'hihat' == t.channel) ||
+                  ('2' === e && 'sidetamlys' == t.channel) ||
+                  ('2' === e && 'lilletromme' == t.channel)
+                  ? (r.addClass('seq-note-yellow'),
+                    (R[t.el.dataset.count + ':' + i] =
+                      t.el.dataset.count + '.' + i + '.' + e))
+                  : '3' === e
+                    ? r.addClass('seq-note-empty')
+                    : delete R[t.el.dataset.count + ':' + i],
+                '4/4' == t.rhythm || '3/4' == t.rhythm
+                  ? (i % 4 === 0 &&
+                    r.addClass('seq-step-measure').html(i / 4 + 1),
+                    swing_toggler && i % 4 === 3 && r.hide())
+                  : ('5/4' != t.rhythm && '6/8' != t.rhythm) ||
+                  (i % 2 === 0 && r.addClass('seq-step-measure').html(n++))
             }),
-            (url_collection.fillActive ? url_collection.fillSequence : url_collection.sequence)[self.channel] = self.model.join(''),
+            (url_collection.sequence[t.channel] = t.model.join('')),
             this.active
-              ? delete mutedChannels[self.el.dataset.count]
-              : (mutedChannels[self.el.dataset.count] = self.el.dataset.count),
+              ? delete N[t.el.dataset.count]
+              : (N[t.el.dataset.count] = t.el.dataset.count),
             this.muted
               ? (this.$active.toggleClass('active', !this.active),
                 this.$notes.toggleClass('seq-active', !this.active),
-                (activeChannels[this.channel] = !this.active),
-                (mutedChannels[self.el.dataset.count] = self.el.dataset.count),
-                this.active || delete mutedChannels[self.el.dataset.count])
+                (P[this.channel] = !this.active),
+                (N[t.el.dataset.count] = t.el.dataset.count),
+                this.active || delete N[t.el.dataset.count])
               : (this.$active.toggleClass('active', this.active),
                 this.$notes.toggleClass('seq-active', this.active),
-                (activeChannels[this.channel] = this.active)),
-            (url_collection.muted = mutedChannels),
-            (url_collection.rhythm = self.rhythm),
+                (P[this.channel] = this.active)),
+            (url_collection.muted = N),
+            (url_collection.rhythm = t.rhythm),
             (url_collection.swing = swing_toggler),
             this
           )
@@ -772,45 +714,45 @@ var thisBpm,
         clearPlayhead: function () {
           this.$notes.removeClass('seq-playhead')
         },
-        setPlayhead: function (step) {
+        setPlayhead: function (e) {
           this.clearPlayhead(),
             this.$notes
-              .filter('[data-tic="' + step + '"]')
+              .filter('[data-tic="' + e + '"]')
               .addClass('seq-playhead')
         },
-        onNoteClick: function (event) {
-          var step = $(event.currentTarget).attr('data-tic'),
-            val = currentPattern[this.channel][step],
-            accentChannels = ['hihat', 'sidetamlys', 'lilletromme'],
-            accentMap = {
+        onNoteClick: function (e) {
+          var n = $(e.currentTarget).attr('data-tic'),
+            i = S[this.channel][n],
+            r = ['hihat', 'sidetamlys', 'lilletromme'],
+            s = {
               hihat: 'aabenhihat',
               sidetamlys: 'sidetamdyb',
               lilletromme: 'kantslag'
             }
-          accentChannels.includes(this.channel)
-            ? (currentPattern[this.channel][step] =
-              '2' === val ? '0' : (parseInt(val) + 1).toString())
-            : (currentPattern[this.channel][step] = '1' === val ? '0' : '1')
-          var newVal = currentPattern[this.channel][step]
-          isPlaying ||
-            '0' === newVal ||
-            ('2' === newVal && this.channel in accentMap
-              ? sampleBank.play(accentMap[this.channel])
-              : sampleBank.play(this.channel)),
+          r.includes(this.channel)
+            ? (S[this.channel][n] =
+              '2' === i ? '0' : (parseInt(i) + 1).toString())
+            : (S[this.channel][n] = '1' === i ? '0' : '1')
+          var a = S[this.channel][n]
+          w ||
+            '0' === a ||
+            ('2' === a && this.channel in s
+              ? t.play(s[this.channel])
+              : t.play(this.channel)),
             $('.clearBtn').toggleClass(
               'clearBtn-disabled',
-              Object.values(currentPattern).every(function (chArr) {
-                return chArr.every(function (noteVal) {
-                  return '0' === noteVal
+              Object.values(S).every(function (e) {
+                return e.every(function (e) {
+                  return '0' === e
                 })
               })
             ),
             this.render(),
             generateURL()
         },
-        onMuteClick: function (event) {
+        onMuteClick: function (e) {
           ; (this.active = !this.active),
-            (activeChannels[this.channel] = this.active),
+            (P[this.channel] = this.active),
             this.$active.toggleClass('active', this.active),
             this.$notes.toggleClass('seq-active', this.active),
             this.active || $('.clearBtn').removeClass('clearBtn-disabled'),
@@ -818,28 +760,28 @@ var thisBpm,
             generateURL()
         },
         spikeEQ: function () {
-          var self = this
+          var e = this
           this.$eq_bar.removeClass('fade'),
             this.$eq_bar.css('transform', 'scaleX(1)'),
             setTimeout(function () {
-              self.$eq_bar.addClass('fade'),
-                self.$eq_bar.css('transform', 'scaleX(0)')
+              e.$eq_bar.addClass('fade'),
+                e.$eq_bar.css('transform', 'scaleX(0)')
             }, 50)
         }
       })
-    return { init: init }
+    return { init: u }
   })(AUDIO, SampleBank),
   Transport = (function () {
-    function requestPlay() {
+    function e() {
       dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_REQUEST_PLAY)
     }
-    function requestStop() {
+    function t() {
       dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_REQUEST_STOP)
     }
-    function init(options) {
-      dispatcher.register(eventKeys), new TransportView(options).render()
+    function n(e) {
+      dispatcher.register(i), new a(e).render()
     }
-    var eventKeys = {
+    var i = {
       TRANSPORT_PLAY: 'transport:play',
       TRANSPORT_STOP: 'transport:stop',
       TRANSPORT_CLEAR: 'transport:clear',
@@ -849,19 +791,9 @@ var thisBpm,
       TRANSPORT_TEMPO_CHANGED: 'transport:tempochanged',
       TRANSPORT_CHANGE_TEMPO: 'transport:changetempo'
     },
-      emptyPatterns = {
+      r = {
         '3/4': {
           sequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            crash: '000000000000',
-            hihat: '000000000000',
-            lilletromme: '000000000000',
-            stortromme: '000000000000'
-          },
-          fillSequence: {
             hihatfod: '000000000000',
             sidetamlys: '000000000000',
             gulvtam: '000000000000',
@@ -886,32 +818,12 @@ var thisBpm,
             lilletromme: '0000000000000000',
             stortromme: '0000000000000000'
           },
-          fillSequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            crash: '0000000000000000',
-            hihat: '0000000000000000',
-            lilletromme: '0000000000000000',
-            stortromme: '0000000000000000'
-          },
           muted: {},
           swing: !1,
           rhythm: '4/4'
         },
         '5/4': {
           sequence: {
-            hihatfod: '0000000000',
-            sidetamlys: '0000000000',
-            gulvtam: '0000000000',
-            ride: '0000000000',
-            crash: '0000000000',
-            hihat: '0000000000',
-            lilletromme: '0000000000',
-            stortromme: '0000000000'
-          },
-          fillSequence: {
             hihatfod: '0000000000',
             sidetamlys: '0000000000',
             gulvtam: '0000000000',
@@ -936,25 +848,15 @@ var thisBpm,
             lilletromme: '000000000000',
             stortromme: '000000000000'
           },
-          fillSequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            crash: '000000000000',
-            hihat: '000000000000',
-            lilletromme: '000000000000',
-            stortromme: '000000000000'
-          },
           muted: {},
           swing: !1,
           rhythm: '6/8'
         }
       },
-      TransportView = Backbone.View.extend({
+      a = Backbone.View.extend({
         events: {
-          'click .btn-play, .btn-pause': function (event) {
-            var btn = $(event.target).closest('.btn-play, .btn-pause')
+          'click .btn-play, .btn-pause': function (e) {
+            var btn = $(e.target).closest('.btn-play, .btn-pause')
             btn.toggleClass('btn-play btn-pause')
             btn.html(btn.hasClass('btn-pause') ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>')
           },
@@ -965,10 +867,10 @@ var thisBpm,
           'mouseover .dropdown button': 'showDropdown',
           'mouseleave .dropdown': 'hideDropdown'
         },
-        initialize: function (options) {
+        initialize: function (n) {
           var self = this
-          this.listenTo(dispatcher, dispatcher.EventKeys.TRANSPORT_PLAY, requestPlay),
-            this.listenTo(dispatcher, dispatcher.EventKeys.TRANSPORT_STOP, requestStop),
+          this.listenTo(dispatcher, dispatcher.EventKeys.TRANSPORT_PLAY, e),
+            this.listenTo(dispatcher, dispatcher.EventKeys.TRANSPORT_STOP, t),
             this.listenTo(
               dispatcher,
               dispatcher.EventKeys.TRANSPORT_CLEAR,
@@ -985,8 +887,8 @@ var thisBpm,
             $(document).on('click', '.modal-button', function () {
               dispatcher.trigger(dispatcher.EventKeys.MODAL_OPEN)
             }),
-            $(document).on('click', '.modal-container', function (event) {
-              event.target.classList.contains('modal-container') &&
+            $(document).on('click', '.modal-container', function (e) {
+              e.target.classList.contains('modal-container') &&
                 (dispatcher.trigger(dispatcher.EventKeys.MODAL_CLOSE),
                   $('.dropdown__content').removeClass('active'))
             }),
@@ -1009,13 +911,9 @@ var thisBpm,
               sel.selectedIndex = (sel.selectedIndex + 1) % len
               $(sel).trigger('change')
             }),
-            $(document).on('click', '.clearBtn', function (event) {
-              event.preventDefault()
+            $(document).on('click', '.clearBtn', function (e) {
+              e.preventDefault()
               dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_CLEAR)
-            }),
-            $(document).on('click', '#fill-in-button', function () {
-              url_collection.fillActive = !url_collection.fillActive
-              dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_FILL)
             }),
             $(document).on('click', '.steps-minus', function () {
               var cur = parseInt($('.transport-steps-display').val(), 10) || 16
@@ -1030,22 +928,22 @@ var thisBpm,
             $(document).on('click', '.tempo-minus', function () {
               var cur = parseInt($('.transport-tempo-display').val(), 10) || 90
               if (cur > 30) $('.transport-tempo-display').val(cur - 1)
-              var tempo = parseInt($('.transport-tempo-display').val(), 10)
-              url_collection.tempo = tempo
+              var t = parseInt($('.transport-tempo-display').val(), 10)
+              url_collection.tempo = t
               url_collection.rhythm = currentPatternForSwing.rhythm
               url_collection.swing = swing_toggler
               generateURL()
-              dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, swing_toggler ? tempo / ('5/4' === currentPatternForSwing.rhythm || '6/8' === currentPatternForSwing.rhythm ? 0.66666666666 : 1.33) : tempo)
+              dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, swing_toggler ? t / ('5/4' === currentPatternForSwing.rhythm || '6/8' === currentPatternForSwing.rhythm ? 0.66666666666 : 1.33) : t)
             }),
             $(document).on('click', '.tempo-plus', function () {
               var cur = parseInt($('.transport-tempo-display').val(), 10) || 90
               if (cur < 250) $('.transport-tempo-display').val(cur + 1)
-              var tempo = parseInt($('.transport-tempo-display').val(), 10)
-              url_collection.tempo = tempo
+              var t = parseInt($('.transport-tempo-display').val(), 10)
+              url_collection.tempo = t
               url_collection.rhythm = currentPatternForSwing.rhythm
               url_collection.swing = swing_toggler
               generateURL()
-              dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, swing_toggler ? tempo / ('5/4' === currentPatternForSwing.rhythm || '6/8' === currentPatternForSwing.rhythm ? 0.66666666666 : 1.33) : tempo)
+              dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, swing_toggler ? t / ('5/4' === currentPatternForSwing.rhythm || '6/8' === currentPatternForSwing.rhythm ? 0.66666666666 : 1.33) : t)
             }),
             $(document).on('change', '.transport-tempo-display', function () {
               var val = parseInt($(this).val(), 10)
@@ -1078,60 +976,54 @@ var thisBpm,
             this
           )
         },
-        outsideClickDetect: function (event) {
-          var target = $(event.target)
-          if (target.closest('.dropdown').length) return
+        outsideClickDetect: function (e) {
+          var t = $(e.target)
+          if (t.closest('.dropdown').length) return
           $('.dropdown').find('.dropdown-content').removeClass('active')
         },
         backButtonFunctionalityURL: function () {
           window.location.href = document.referrer
         },
-        onPlayClick: requestPlay,
-        onStopClick: requestStop,
-        onIncomingTempoChange: function (tempo) {
-          $('.transport-tempo-display').val(Math.round(tempo)),
-            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, tempo)
+        onPlayClick: e,
+        onStopClick: t,
+        onIncomingTempoChange: function (e) {
+          $('.transport-tempo-display').val(Math.round(e)),
+            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, e)
         },
-        keydown: function (event) {
-          var curTempo = parseInt($('.transport-tempo-display').val(), 10) || 90,
-            playBtn = $('#play')
-          switch (event.keyCode) {
+        keydown: function (n) {
+          var i = parseInt($('.transport-tempo-display').val(), 10) || 90,
+            r = $('#play')
+          switch (n.keyCode) {
             case 32:
-              event.preventDefault(),
+              n.preventDefault(),
                 this.spacePressed ||
                 ((this.spacePressed = !0),
-                  playBtn.toggleClass('btn-play btn-pause').html(playBtn.hasClass('btn-pause') ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>'),
-                  playBtn.hasClass('btn-pause')
-                    ? dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_PLAY, requestPlay)
-                    : requestStop())
+                  r.toggleClass('btn-play btn-pause').html(r.hasClass('btn-pause') ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>'),
+                  r.hasClass('btn-pause')
+                    ? dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_PLAY, e)
+                    : t())
               break
             case 37:
             case 39:
-              if (event.target.tagName === 'INPUT') break
-              var newVal = 37 === event.keyCode ? Math.max(30, curTempo - 1) : Math.min(250, curTempo + 1)
+              if (n.target.tagName === 'INPUT') break
+              var newVal = 37 === n.keyCode ? Math.max(30, i - 1) : Math.min(250, i + 1)
               $('.transport-tempo-display').val(newVal)
-              ;(37 === event.keyCode ? $('.tempo-minus') : $('.tempo-plus')).trigger('click')
+              ;(37 === n.keyCode ? $('.tempo-minus') : $('.tempo-plus')).trigger('click')
           }
         },
-        keyup: function (event) {
-          32 === event.keyCode && (this.spacePressed = !1)
+        keyup: function (e) {
+          32 === e.keyCode && (this.spacePressed = !1)
         },
-        onClearBtnClick: function (event) {
-          event && event.preventDefault(),
+        onClearBtnClick: function (e) {
+          e && e.preventDefault(),
             (currentPatternForSwing =
-              emptyPatterns[currentPatternForSwing.rhythm] || currentPatternForSwing),
+              r[currentPatternForSwing.rhythm] || currentPatternForSwing),
             $('.clearBtn').addClass('clearBtn-disabled')
-          for (var ch in currentPatternForSwing.sequence)
-            (currentPatternForSwing.sequence[ch] =
-              currentPatternForSwing.sequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.sequence[ch] =
-                currentPatternForSwing.sequence[ch].replace(/2/g, '0'))
-          for (var ch in currentPatternForSwing.fillSequence)
-            (currentPatternForSwing.fillSequence[ch] =
-              currentPatternForSwing.fillSequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.fillSequence[ch] =
-                currentPatternForSwing.fillSequence[ch].replace(/2/g, '0'))
-          url_collection.fillActive = !1
+          for (var t in currentPatternForSwing.sequence)
+            (currentPatternForSwing.sequence[t] =
+              currentPatternForSwing.sequence[t].replace(/1/g, '0')),
+              (currentPatternForSwing.sequence[t] =
+                currentPatternForSwing.sequence[t].replace(/2/g, '0'))
           resetURL(),
             $('.presetsBtn').text(BUTTON_NAMES.presetsButtonName),
             $('.preset_active').removeClass('active'),
@@ -1140,17 +1032,17 @@ var thisBpm,
               currentPatternForSwing
             )
         },
-        hideDropdown: function (event) {
-          $(event.currentTarget).find('.dropdown-content').removeClass('active')
+        hideDropdown: function (e) {
+          $(e.currentTarget).find('.dropdown-content').removeClass('active')
         },
-        showDropdown: function (event) {
-          $(event.currentTarget)
+        showDropdown: function (e) {
+          $(e.currentTarget)
             .parent()
             .find('.dropdown-content')
             .addClass('active')
         },
-        onBeatClick: function (event) {
-          $(event.currentTarget)
+        onBeatClick: function (e) {
+          $(e.currentTarget)
             .parent()
             .find('.dropdown-content')
             .toggleClass('active')
@@ -1175,49 +1067,44 @@ var thisBpm,
           var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
           var urlData = saved[val]
           if (!urlData) return
-          var parts = urlData.split('||fill||'),
-            mainData = parts[0],
-            fillData = parts[1] || null
-          var decoded = fillData ? decodeURL(mainData, fillData) : decodeURL(mainData)
-          if (!decoded) return
-          url_collection = decoded
-          numSteps = decoded.steps || 16
+          var n = decodeURL(urlData)
+          if (!n) return
+          url_collection = n
+          numSteps = n.steps || 16
           $('.transport-steps-display').val(numSteps)
-          'standard' !== decoded.sound &&
-            $('.sound-types-button').text(SOUND_TYPES[decoded.sound])
-          dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, decoded.sound)
-          decoded.swing
-            ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, decoded),
+          'standard' !== n.sound &&
+            $('.sound-types-button').text(SOUND_TYPES[n.sound])
+          dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, n.sound)
+          n.swing
+            ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, n),
               dispatcher.trigger(dispatcher.EventKeys.SWING_SELECTED))
-            : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, decoded),
+            : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, n),
               dispatcher.trigger(
                 dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED,
-                decoded.tempo
+                n.tempo
               ))
-          window.history.replaceState('', '', '?data=' + encodeURIComponent(mainData) + '&data_fill=' + encodeURIComponent(fillData || ''))
+          window.history.replaceState('', '', '?data=' + encodeURIComponent(urlData))
         },
         onSavePreset: function () {
-          var name = prompt('Preset name:')
-          if (!name) return
+          var e = prompt('Preset name:')
+          if (!e) return
           generateURL()
-          var urlObj = new URL(window.location.href),
-            dataPart = urlObj.searchParams.get('data'),
-            fillPart = urlObj.searchParams.get('data_fill') || ''
-          if (!dataPart) return
-          var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
-          saved[name] = dataPart + '||fill||' + fillPart
-          localStorage.setItem('drum_saved_presets', JSON.stringify(saved))
+          var t = window.location.search.replace('?data=', '')
+          if (!t) return
+          var n = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
+          n[e] = t
+          localStorage.setItem('drum_saved_presets', JSON.stringify(n))
           this.populatePresetSelect()
         },
       })
-    return { init: init }
+    return { init: n }
   })(),
   PresetList = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new PresetListView(options).render()
+    function e(e) {
+      dispatcher.register(t), new s(e).render()
     }
-    var eventKeys = { PRESET_SELECTED: 'preset:selected' },
-      presetData = {
+    var t = { PRESET_SELECTED: 'preset:selected' },
+      n = {
         'Pop/rock 1': {
           tempo: 90,
           name: 'Pop/rock 1',
@@ -1539,11 +1426,11 @@ var thisBpm,
           rhythm: '4/4'
         }
       },
-      presetIdx = 0
-    _.forOwn(presetData, function (data) {
-      ; (presetIdx += 1), (data.name = BUTTON_NAMES.presets[presetIdx])
+      i = 0
+    _.forOwn(n, function (e) {
+      ; (i += 1), (e.name = BUTTON_NAMES.presets[i])
     })
-    var PresetListView = Backbone.View.extend({
+    var s = Backbone.View.extend({
         events: { 'click .preset-item': 'onPresetClick' },
         initialize: function () {
           this.listenTo(
@@ -1554,50 +1441,50 @@ var thisBpm,
         },
         render: function () {
           var html = ''
-          for (var key in presetData) {
-            html += '<li data-preset-id="' + key + '" class="preset-item">' + presetData[key].name + '</li>'
+          for (var key in n) {
+            html += '<li data-preset-id="' + key + '" class="preset-item">' + n[key].name + '</li>'
           }
           this.$el.html(html)
           this.$items = this.$el.find('.preset-item')
           return this
         },
-        onPresetClick: function (event) {
-          event.preventDefault()
-          var label = $(event.currentTarget).text(),
-            id = $(event.currentTarget).attr('data-preset-id'),
-            rhythm = presetData[id].rhythm,
-            swing = presetData[id].swing,
-            tempo = presetData[id].tempo,
-            adjustedTempo = presetData[id].tempo
-          swing ? ((adjustedTempo /= 1.33), (swing_toggler = !0)) : (swing_toggler = !1),
+        onPresetClick: function (e) {
+          e.preventDefault()
+          var t = $(e.currentTarget).text(),
+            i = $(e.currentTarget).attr('data-preset-id'),
+            r = n[i].rhythm,
+            s = n[i].swing,
+            a = n[i].tempo,
+            o = n[i].tempo
+          s ? ((o /= 1.33), (swing_toggler = !0)) : (swing_toggler = !1),
             $('.swing-toggle').toggleClass('active', swing_toggler),
             this.$items.removeClass('preset_active active'),
             $('.set-beat').removeClass('active'),
             $('.dropdown ul').removeClass('active'),
-            $(event.currentTarget).addClass('preset_active active'),
-            $('.presetsBtn').text(label),
-            $('.beatTime').text(rhythm),
+            $(e.currentTarget).addClass('preset_active active'),
+            $('.presetsBtn').text(t),
+            $('.beatTime').text(r),
             $('.clearBtn').removeClass('clearBtn-disabled'),
-            (url_collection.tempo = tempo),
-            (url_collection.rhythm = rhythm),
+            (url_collection.tempo = a),
+            (url_collection.rhythm = r),
             (url_collection.swing = swing_toggler),
             generateURL(),
-            dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, presetData[id]),
-            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, adjustedTempo)
+            dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, n[i]),
+            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, o)
         }
       })
     return {
-      init: init,
-      getPresetData: function (name) { return presetData[name] },
-      getAllPresetNames: function () { return Object.keys(presetData) }
+      init: e,
+      getPresetData: function (name) { return n[name] },
+      getAllPresetNames: function () { return Object.keys(n) }
     }
   })(),
   SoundTypes = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new SoundTypesView(options).render()
+    function e(e) {
+      dispatcher.register(t), new r(e).render()
     }
-    var eventKeys = { SOUND_SELECTED: 'sound:selected' },
-      soundMap = {
+    var t = { SOUND_SELECTED: 'sound:selected' },
+      i = {
         standard: 'standard',
         powerful: 'powerful',
         monumental: 'monumental',
@@ -1605,7 +1492,7 @@ var thisBpm,
         minimalistic: 'minimalistic',
         energetic: 'energetic'
       },
-      SoundTypesView = Backbone.View.extend({
+      r = Backbone.View.extend({
         events: { 'click .sound-item': 'onSoundClick' },
         initialize: function () {
           this.listenTo(
@@ -1616,7 +1503,7 @@ var thisBpm,
         },
         render: function () {
           var html = ''
-          for (var key in soundMap) {
+          for (var key in i) {
             var label = SOUND_TYPES[key] || key
             html += '<li data-sound-id="' + key + '" class="sound-item">' + label + '</li>'
           }
@@ -1624,40 +1511,30 @@ var thisBpm,
           this.$items = this.$el.find('.sound-item')
           return this
         },
-        onSoundClick: function (event) {
-          event.preventDefault()
-          var label = $(event.currentTarget).text(),
-            id = $(event.currentTarget).attr('data-sound-id')
+        onSoundClick: function (e) {
+          e.preventDefault()
+          var t = $(e.currentTarget).text(),
+            n = $(e.currentTarget).attr('data-sound-id')
           this.$items.removeClass('sound_active active'),
-            $(event.currentTarget).addClass('sound_active active'),
+            $(e.currentTarget).addClass('sound_active active'),
             $('.dropdown ul').removeClass('active'),
-            $('.sound-types-button').text(label),
-            dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, soundMap[id]),
-            url_collection.sound !== soundMap[id] &&
-            ((url_collection.sound = soundMap[id]), generateURL())
+            $('.sound-types-button').text(t),
+            dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, i[n]),
+            url_collection.sound !== i[n] &&
+            ((url_collection.sound = i[n]), generateURL())
         }
       })
-    return { init: init }
+    return { init: e }
   })(),
   TimeSignature = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new TimeSignatureView(options).render()
+    function e(e) {
+      dispatcher.register(t), new s(e).render()
     }
-    var eventKeys = { BEAT_SELECTED: 'beat:selected' },
-      signatures = ['3/4', '4/4', '5/4', '6/8'],
-      emptyPatternData = {
+    var t = { BEAT_SELECTED: 'beat:selected' },
+      i = ['3/4', '4/4', '5/4', '6/8'],
+      r = {
         '3/4': {
           sequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            crash: '000000000000',
-            hihat: '000000000000',
-            lilletromme: '000000000000',
-            stortromme: '000000000000'
-          },
-          fillSequence: {
             hihatfod: '000000000000',
             sidetamlys: '000000000000',
             gulvtam: '000000000000',
@@ -1682,32 +1559,12 @@ var thisBpm,
             lilletromme: '0000000000000000',
             stortromme: '0000000000000000'
           },
-          fillSequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            crash: '0000000000000000',
-            hihat: '0000000000000000',
-            lilletromme: '0000000000000000',
-            stortromme: '0000000000000000'
-          },
           muted: {},
           swing: !1,
           rhythm: '4/4'
         },
         '5/4': {
           sequence: {
-            hihatfod: '0000000000',
-            sidetamlys: '0000000000',
-            gulvtam: '0000000000',
-            ride: '0000000000',
-            crash: '0000000000',
-            hihat: '0000000000',
-            lilletromme: '0000000000',
-            stortromme: '0000000000'
-          },
-          fillSequence: {
             hihatfod: '0000000000',
             sidetamlys: '0000000000',
             gulvtam: '0000000000',
@@ -1732,22 +1589,12 @@ var thisBpm,
             lilletromme: '000000000000',
             stortromme: '000000000000'
           },
-          fillSequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            crash: '000000000000',
-            hihat: '000000000000',
-            lilletromme: '000000000000',
-            stortromme: '000000000000'
-          },
           muted: {},
           swing: !1,
           rhythm: '6/8'
         }
       },
-      TimeSignatureView = Backbone.View.extend({
+      s = Backbone.View.extend({
         events: { 'click .set-beat': 'onBeatClick' },
         initialize: function () {
           this.listenTo(
@@ -1758,59 +1605,52 @@ var thisBpm,
         },
         render: function () {
           var html = ''
-          for (var bi = 0; bi < signatures.length; bi++)
-            html += '<li class="set-beat" data-beat="' + signatures[bi] + '">' + signatures[bi] + '</li>'
+          for (var bi = 0; bi < i.length; bi++)
+            html += '<li class="set-beat" data-beat="' + i[bi] + '">' + i[bi] + '</li>'
           this.$el.html(html)
           this.$items = this.$el.find('.set-beat')
           return this
         },
-        onBeatClick: function (event) {
-          event.preventDefault()
-          var beat = $(event.currentTarget).text()
+        onBeatClick: function (e) {
+          e.preventDefault()
+          var t = $(e.currentTarget).text()
           this.$items.removeClass('beat_active active'),
-            $(event.currentTarget).addClass('beat_active active'),
+            $(e.currentTarget).addClass('beat_active active'),
             $('.dropdown ul').removeClass('active'),
-            $('.beatTime').text(beat),
+            $('.beatTime').text(t),
             $('.presetsBtn').text(BUTTON_NAMES.presetsButtonName),
             $('.clearBtn').addClass('clearBtn-disabled')
-          var tempo = parseInt($('.transport-tempo-display').val(), 10) || 90
-          currentPatternForSwing = emptyPatternData[beat] || currentPatternForSwing
-          for (var ch in currentPatternForSwing.sequence)
-            (currentPatternForSwing.sequence[ch] =
-              currentPatternForSwing.sequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.sequence[ch] =
-                currentPatternForSwing.sequence[ch].replace(/2/g, '0'))
-          for (var ch in currentPatternForSwing.fillSequence)
-            (currentPatternForSwing.fillSequence[ch] =
-              currentPatternForSwing.fillSequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.fillSequence[ch] =
-                currentPatternForSwing.fillSequence[ch].replace(/2/g, '0'))
+          var n = parseInt($('.transport-tempo-display').val(), 10) || 90
+          currentPatternForSwing = r[t] || currentPatternForSwing
+          for (var i in currentPatternForSwing.sequence)
+            (currentPatternForSwing.sequence[i] =
+              currentPatternForSwing.sequence[i].replace(/1/g, '0')),
+              (currentPatternForSwing.sequence[i] =
+                currentPatternForSwing.sequence[i].replace(/2/g, '0'))
               ; (url_collection.sequence = currentPatternForSwing.sequence),
-                (url_collection.fillSequence = currentPatternForSwing.fillSequence),
-                (url_collection.fillActive = !1),
-                (url_collection.rhythm = beat),
+                (url_collection.rhythm = t),
                 generateURL()
-          var playBtn = $('#play')
-          playBtn[0].classList.contains('btn-pause') &&
+          var s = $('#play')
+          s[0].classList.contains('btn-pause') &&
             (dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_REQUEST_STOP),
               dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_REQUEST_PLAY),
-              playBtn.toggleClass('btn-play btn-pause').html(playBtn.hasClass('btn-pause') ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>')),
+              s.toggleClass('btn-play btn-pause').html(s.hasClass('btn-pause') ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>')),
             dispatcher.trigger(
               dispatcher.EventKeys.SEQUENCER_SET_PATTERN_FROM_TACT,
               currentPatternForSwing
             ),
-            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, tempo),
-            dispatcher.trigger(dispatcher.EventKeys.BEAT_SELECTED, beat)
+            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, n),
+            dispatcher.trigger(dispatcher.EventKeys.BEAT_SELECTED, t)
         }
       })
-    return { init: init }
+    return { init: e }
   })(),
   SwingRhythm = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new SwingRhythmView(options).render()
+    function e(e) {
+      dispatcher.register(t), new i(e).render()
     }
-    var eventKeys = { SWING_SELECTED: 'swing:selected' },
-      SwingRhythmView = Backbone.View.extend({
+    var t = { SWING_SELECTED: 'swing:selected' },
+      i = Backbone.View.extend({
         events: { 'click .swing-toggle': 'onSwingClick' },
         initialize: function () {
           this.listenTo(
@@ -1822,41 +1662,37 @@ var thisBpm,
         render: function () {
           return this
         },
-        onSwingClick: function () {
-          if (url_collection.fillActive) {
-            url_collection.fillActive = !1
-            $('#fill-in-button').removeClass('fill-active')
-          }
+        onSwingClick: function (e) {
           swing_toggler = !swing_toggler
-          var rows = $('#sequencer-panel').find('.seq-row'),
-            muteBtns = $('.sequencer-channels').find('.mute')
+          var t = $('#sequencer-panel').find('.seq-row'),
+            n = $('.sequencer-channels').find('.mute')
           this.$el.find('.swing-toggle').toggleClass('active', swing_toggler),
-            rows.each(function (rowIdx) {
-              var pattern = '',
-                spans = $(this).find('span')
-              spans.each(function (spanIdx) {
-                if ($(spans[spanIdx]).hasClass('seq-note')) pattern += '1'
-                else if ($(spans[spanIdx]).hasClass('seq-note-yellow')) pattern += '2'
+            t.each(function (e) {
+              var t = '',
+                n = $(this).find('span')
+              n.each(function (e) {
+                if ($(n[e]).hasClass('seq-note')) t += '1'
+                else if ($(n[e]).hasClass('seq-note-yellow')) t += '2'
                 else {
-                  if ($(spans[spanIdx]).hasClass('seq-note-empty')) return pattern
-                  pattern += '0'
+                  if ($(n[e]).hasClass('seq-note-empty')) return t
+                  t += '0'
                 }
               }),
                 (currentPatternForSwing.sequence[
-                  Object.keys(currentPatternForSwing.sequence)[rowIdx]
-                ] = pattern)
+                  Object.keys(currentPatternForSwing.sequence)[e]
+                ] = t)
             })
-          var tempo = parseInt($('.transport-tempo-display').val(), 10) || 90
+          var i = parseInt($('.transport-tempo-display').val(), 10) || 90
           swing_toggler
             ? '5/4' === currentPatternForSwing.rhythm ||
               '6/8' === currentPatternForSwing.rhythm
-              ? (newTempo = tempo / 0.66666666666)
-              : (newTempo = tempo / 1.33)
-            : (newTempo = tempo),
+              ? (newTempo = i / 0.66666666666)
+              : (newTempo = i / 1.33)
+            : (newTempo = i),
             (currentPatternForSwing.muted = {}),
-            muteBtns.each(function (muteIdx) {
+            n.each(function (e) {
               $(this).hasClass('active') ||
-                (currentPatternForSwing.muted[muteIdx] = 1)
+                (currentPatternForSwing.muted[e] = 1)
             }),
             dispatcher.trigger(
               dispatcher.EventKeys.SEQUENCER_SET_PATTERN,
@@ -1868,14 +1704,14 @@ var thisBpm,
             )
         }
       })
-    return { init: init }
+    return { init: e }
   })(),
   Modal = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new ModalView(options).render()
+    function e(e) {
+      dispatcher.register(t), new i(e).render()
     }
-    var eventKeys = { MODAL_OPEN: 'modal:open', MODAL_CLOSE: 'modal:close' },
-      ModalView = Backbone.View.extend({
+    var t = { MODAL_OPEN: 'modal:open', MODAL_CLOSE: 'modal:close' },
+      i = Backbone.View.extend({
         events: { 'click .dropdown__select': 'toggleDropdown' },
         initialize: function () {
           this.listenTo(dispatcher, dispatcher.EventKeys.MODAL_OPEN, this.open),
@@ -1889,18 +1725,18 @@ var thisBpm,
         render: function () {
           return $('.modal').on('click', this.outsideClick.bind(this)), this
         },
-        outsideClick: function (event) {
-          0 === $(event.target).closest('.dropdown__select').length &&
-            0 === $(event.target).closest('.dropdown__content').length &&
+        outsideClick: function (e) {
+          0 === $(e.target).closest('.dropdown__select').length &&
+            0 === $(e.target).closest('.dropdown__content').length &&
             this.$el.find('.dropdown__content').removeClass('active')
         },
-        toggleDropdown: function (event) {
-          event.stopPropagation(),
+        toggleDropdown: function (e) {
+          e.stopPropagation(),
             this.$el
               .find('.dropdown__content')
-              .not($(event.currentTarget).find('.dropdown__content'))
+              .not($(e.currentTarget).find('.dropdown__content'))
               .removeClass('active'),
-            $(event.currentTarget).find('.dropdown__content').toggleClass('active')
+            $(e.currentTarget).find('.dropdown__content').toggleClass('active')
         },
         open: function () {
           this.$el.show()
@@ -1909,33 +1745,33 @@ var thisBpm,
           this.$el.hide()
         }
       })
-    return { init: init }
+    return { init: e }
   })(),
   Mixer = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new MixerView(options).render()
+    function e(e) {
+      dispatcher.register(i), new s(e).render()
     }
-    var channelList = ['hihatfod', 'sidetamlys', 'gulvtam', 'ride', 'crash', 'hihat', 'lilletromme', 'stortromme', 'aabenhihat', 'kantslag', 'sidetamdyb'],
-      channelNames = TRANSLATION.patternName,
-      eventKeys = { MIXER_CHANGE: 'mixer:change' },
-      MixerView = Backbone.View.extend({
+    var t = ['hihatfod', 'sidetamlys', 'gulvtam', 'ride', 'crash', 'hihat', 'lilletromme', 'stortromme', 'aabenhihat', 'kantslag', 'sidetamdyb'],
+      n = TRANSLATION.patternName,
+      i = { MIXER_CHANGE: 'mixer:change' },
+      s = Backbone.View.extend({
         initialize: function () {
           var self = this
           this.listenTo(dispatcher, dispatcher.EventKeys.MIXER_CHANGE, this.render)
-          $(document).on('input', '.mixer-fader', function (event) { self.onFaderChange(event) })
-          $(document).on('input', '.eq-fader', function (event) { self.onEQChange(event) })
-          $(document).on('input', '.fx-fader', function (event) { self.onFXChange(event) })
+          $(document).on('input', '.mixer-fader', function (e) { self.onFaderChange(e) })
+          $(document).on('input', '.eq-fader', function (e) { self.onEQChange(e) })
+          $(document).on('input', '.fx-fader', function (e) { self.onFXChange(e) })
         },
         render: function () {
           var _this = this
-          function mapRange(val, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (val - inMin) / (inMax - inMin) }
+          function mapRange(v, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (v - inMin) / (inMax - inMin) }
           function fromSliderValue(val) { val = parseInt(val); if (val <= 50) return val; if (val <= 60) return 50; return val - 10 }
           function toSliderValue(val) { if (val < 50) return val; if (val === 50) return 55; return val + 10 }
           var master = SampleBank.getMasterGain()
           $('.mixer-fader[data-channel="master"]').val(master)
           $('.mixer-value-master').text(Math.round(master * 100) + '%')
-          for (var ci in channelList) {
-            var ch = channelList[ci], gain = SampleBank.getGain(ch)
+          for (var ci in t) {
+            var ch = t[ci], gain = SampleBank.getGain(ch)
             $('.mixer-fader[data-channel="' + ch + '"]').val(gain)
             $('.mixer-fader[data-channel="' + ch + '"]').closest('.mixer-channel').find('.mixer-value').text(Math.round(gain * 100) + '%')
           }
@@ -1958,21 +1794,21 @@ var thisBpm,
           _this.$el.find('[data-fx="delayMix"]').val(dMix)
           return this
         },
-        onFaderChange: function (event) {
-          var channel = $(event.currentTarget).data('channel'),
-            gain = parseFloat($(event.currentTarget).val())
-          'master' === channel ? (SampleBank.setMasterGain(gain), localStorage.setItem('drum_master_gain', gain)) : (SampleBank.setGain(channel, gain), localStorage.setItem('drum_gain_' + channel, gain))
-          $(event.currentTarget).closest('.mixer-channel').find('.mixer-value').text(Math.round(gain * 100) + '%')
+        onFaderChange: function (e) {
+          var t = $(e.currentTarget).data('channel'),
+            n = parseFloat($(e.currentTarget).val())
+          'master' === t ? (SampleBank.setMasterGain(n), localStorage.setItem('drum_master_gain', n)) : (SampleBank.setGain(t, n), localStorage.setItem('drum_gain_' + t, n))
+          $(e.currentTarget).closest('.mixer-channel').find('.mixer-value').text(Math.round(n * 100) + '%')
         },
-        onEQChange: function (event) {
-          var param = $(event.currentTarget).data('eq'),
-            rawVal = parseInt($(event.currentTarget).val())
+        onEQChange: function (e) {
+          var p = $(e.currentTarget).data('eq'),
+            v = parseInt($(e.currentTarget).val())
           function fromSliderValue(val) { if (val <= 50) return val; if (val <= 60) return 50; return val - 10 }
           function toSliderValue(val) { if (val < 50) return val; if (val === 50) return 55; return val + 10 }
-          var val = fromSliderValue(rawVal)
-          event.currentTarget.value = toSliderValue(val)
-          function mapRange(val, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (val - inMin) / (inMax - inMin) }
-          switch (param) {
+          var val = fromSliderValue(v)
+          e.currentTarget.value = toSliderValue(val)
+          function mapRange(v, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (v - inMin) / (inMax - inMin) }
+          switch (p) {
             case 'bass':
               AudioFX.setBass(mapRange(val, 0, 100, -12, 12))
               break
@@ -1986,33 +1822,33 @@ var thisBpm,
               AudioFX.setFilterSlider(val / 100)
               break
           }
-          localStorage.setItem('drum_eq_' + param, val)
+          localStorage.setItem('drum_eq_' + p, val)
         },
-        onFXChange: function (event) {
-          var param = $(event.currentTarget).data('fx'),
-            val = parseFloat($(event.currentTarget).val())
-          function mapRange(val, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (val - inMin) / (inMax - inMin) }
-          switch (param) {
+        onFXChange: function (e) {
+          var p = $(e.currentTarget).data('fx'),
+            v = parseFloat($(e.currentTarget).val())
+          function mapRange(v, inMin, inMax, outMin, outMax) { return outMin + (outMax - outMin) * (v - inMin) / (inMax - inMin) }
+          switch (p) {
             case 'reverbMix':
-              AudioFX.setReverbMix(val)
+              AudioFX.setReverbMix(v)
               break
             case 'chorus':
-              AudioFX.setChorus(val)
+              AudioFX.setChorus(v)
               break
             case 'delayTime':
-              AudioFX.setDelayTime(mapRange(val, 0, 1, 0.01, 2))
+              AudioFX.setDelayTime(mapRange(v, 0, 1, 0.01, 2))
               break
             case 'delayFeedback':
-              AudioFX.setDelayFeedback(val)
+              AudioFX.setDelayFeedback(v)
               break
             case 'delayMix':
-              AudioFX.setDelayMix(val)
+              AudioFX.setDelayMix(v)
               break
           }
-          localStorage.setItem('drum_fx_' + param, val)
+          localStorage.setItem('drum_fx_' + p, v)
         }
       })
-    return { init: init }
+    return { init: e }
   })(),
   App = {
     _connectModules: function () {
@@ -2025,43 +1861,43 @@ var thisBpm,
         }),
         dispatcher.on(
           dispatcher.EventKeys.TRANSPORT_REQUEST_MUTE,
-          function (pattern) {
-            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_PATTERN, pattern)
+          function (e) {
+            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_PATTERN, e)
           }
         ),
         dispatcher.on(
           dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED,
-          function (tempo) {
-            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_TEMPO, tempo)
+          function (e) {
+            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_TEMPO, e)
           }
         ),
-        dispatcher.on(dispatcher.EventKeys.PRESET_SELECTED, function (preset) {
+        dispatcher.on(dispatcher.EventKeys.PRESET_SELECTED, function (e) {
           dispatcher.trigger(
             dispatcher.EventKeys.TRANSPORT_CHANGE_TEMPO,
-            preset.tempo
+            e.tempo
           ),
-            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_PATTERN, preset)
+            dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_PATTERN, e)
         }),
-        dispatcher.on(dispatcher.EventKeys.SOUND_SELECTED, function (sound) {
-          var basePath = 'audio/' + sound + '/',
-            samples = {
-              hihatfod: basePath + 'hihat-foot.mp3',
-              sidetamlys: basePath + 'tom1.mp3',
-              gulvtam: basePath + 'floor-tom.mp3',
-              ride: basePath + 'ride.mp3',
-              crash: basePath + 'crash.mp3',
-              hihat: basePath + 'hihat.mp3',
-              kantslag: basePath + 'snare-stick.mp3',
-              stortromme: basePath + 'bass.mp3',
-              aabenhihat: basePath + 'hihat-open.mp3',
-              lilletromme: basePath + 'snare-drum.mp3',
-              sidetamdyb: basePath + 'tom2.mp3'
+        dispatcher.on(dispatcher.EventKeys.SOUND_SELECTED, function (e) {
+          var t = 'audio/' + e + '/',
+            n = {
+              hihatfod: t + 'hihat-foot.mp3',
+              sidetamlys: t + 'tom1.mp3',
+              gulvtam: t + 'floor-tom.mp3',
+              ride: t + 'ride.mp3',
+              crash: t + 'crash.mp3',
+              hihat: t + 'hihat.mp3',
+              kantslag: t + 'snare-stick.mp3',
+              stortromme: t + 'bass.mp3',
+              aabenhihat: t + 'hihat-open.mp3',
+              lilletromme: t + 'snare-drum.mp3',
+              sidetamdyb: t + 'tom2.mp3'
             }
-          SampleBank.loadNew(samples, function () { })
+          SampleBank.loadNew(n, function () { })
         })
     },
     onLoad: function () {
-      var defaultState = {
+      var e = {
         sequence: {
           hihatfod: '0000000000000000',
           sidetamlys: '0000000000000000',
@@ -2072,43 +1908,32 @@ var thisBpm,
           lilletromme: '0000100000001000',
           stortromme: '1000000010000000'
         },
-        fillSequence: {
-          hihatfod: '0000000000000000',
-          sidetamlys: '0000000000000000',
-          gulvtam: '0000000000000000',
-          ride: '0000000000000000',
-          crash: '0000000000000000',
-          hihat: '1010101010101010',
-          lilletromme: '0000100000001000',
-          stortromme: '1000000010000000'
-        },
-        fillActive: !1,
         muted: {},
         swing: !1,
         rhythm: '4/4',
         tempo: 90,
         sound: 'standard'
       },
-        urlData = parseURLData(),
-        initialState = urlData ? urlData : defaultState
+        t = parseURLData(),
+        n = t ? t : e
       this._connectModules(),
-        (url_collection = initialState),
-        numSteps = initialState.steps || 16,
+        (url_collection = n),
+        numSteps = n.steps || 16,
         $('.transport-steps-display').val(numSteps),
-        'standard' !== initialState.sound &&
-        $('.sound-types-button').text(SOUND_TYPES[initialState.sound]),
-        dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, initialState.sound),
-        initialState.swing
-          ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, initialState),
+        'standard' !== n.sound &&
+        $('.sound-types-button').text(SOUND_TYPES[n.sound]),
+        dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, n.sound),
+        n.swing
+          ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, n),
             dispatcher.trigger(dispatcher.EventKeys.SWING_SELECTED))
-          : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, initialState),
+          : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, n),
             dispatcher.trigger(
               dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED,
-              initialState.tempo
+              n.tempo
             ))
     },
     init: function () {
-      var sampleNames = {
+      var e = {
         hihatfod: 'hihat-foot',
         sidetamlys: 'tom1',
         gulvtam: 'floor-tom',
@@ -2121,19 +1946,19 @@ var thisBpm,
         lilletromme: 'snare-drum',
         sidetamdyb: 'tom2'
       },
-        urls = {},
-        keys = Object.keys(sampleNames)
-      keys.forEach(function (key) {
-        var name = sampleNames[key]
-        urls[key] = 'audio/standard/' + name + '.mp3'
+        t = {},
+        n = Object.keys(e)
+      n.forEach(function (n) {
+        var i = e[n]
+        t[n] = 'audio/standard/' + i + '.mp3'
       });
-      var channels = ['hihatfod', 'sidetamlys', 'gulvtam', 'ride', 'crash', 'hihat', 'lilletromme', 'stortromme', 'aabenhihat', 'kantslag', 'sidetamdyb']
-      SampleBank.initGains(channels)
-      var masterGainVal = localStorage.getItem('drum_master_gain')
-      masterGainVal && SampleBank.setMasterGain(parseFloat(masterGainVal))
-      for (var idx in channels) {
-        var savedGain = localStorage.getItem('drum_gain_' + channels[idx])
-        savedGain && SampleBank.setGain(channels[idx], parseFloat(savedGain))
+      var i = ['hihatfod', 'sidetamlys', 'gulvtam', 'ride', 'crash', 'hihat', 'lilletromme', 'stortromme', 'aabenhihat', 'kantslag', 'sidetamdyb']
+      SampleBank.initGains(i)
+      var s = localStorage.getItem('drum_master_gain')
+      s && SampleBank.setMasterGain(parseFloat(s))
+      for (var a in i) {
+        var o = localStorage.getItem('drum_gain_' + i[a])
+        o && SampleBank.setGain(i[a], parseFloat(o))
       }
       Sequencer.init({ el: $('#sequencer-panel') }),
         Transport.init({ el: $('#transport-panel') }),
@@ -2162,7 +1987,7 @@ var thisBpm,
           el.length && el.val(parseFloat(v)).trigger('input')
         }
       }
-      SampleBank.init(urls, this.onLoad.bind(this))
+      SampleBank.init(t, this.onLoad.bind(this))
     }
   }
 App.init()

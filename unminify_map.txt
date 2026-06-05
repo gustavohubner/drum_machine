@@ -1,0 +1,128 @@
+=== UNMINIFIED FUNCTION/PARAMETER MAP ===
+
+--- generateURL (line 1) ---
+2:   function e(e)                    -> function encodeSequence(sequence)
+28:  function t(e)                    -> function encodeMuted(muted)
+33:  function n(e)                    -> function encodeSound(sound)
+
+--- decodeURL (line 54) ---
+55:  function t(e, t, n, i, r, s)    -> function decodePart(part, alphabet, value, steps, result, channelMap)
+71:  function n(e, n, i)             -> function decodeSequence(normalPart, accentPart, steps)
+98:  function i(e)                    -> function decodeMuted(mutedStr)
+102: function r(e)                    -> function decodeSound(letter)
+113: function s(e)                    -> function getStepsFromRhythm(rhythm)
+
+Inner callbacks (decodeURL):
+57:  a.forEach(function (e)           -> a.forEach(function (part)
+66:  r[s[a]].forEach(function (e, t)  -> r[s[a]].forEach(function (val, idx)
+
+--- SampleBank IIFE (line 198) ---
+199: function t(e, t)                 -> function init(samples, callback)
+204: function n()                     -> function defaultCallback()
+207: function i(e, t)                 -> function onDecode(key, buffer)
+212: function r(t, n)                 -> function loadSample(key, url)
+232: function s(e, n)                 -> function loadNew(samples, callback)
+235: function a(t, n)                 -> function play(key, when)
+
+--- AudioFX IIFE (line 271) ---
+     (returned functions already use descriptive names: getBass, setBass, etc.)
+
+--- Sequencer IIFE (line 394) ---
+395: function n(e)                    -> function setTempo(bpm)
+405: function i()                     -> function scheduleLoop()
+414: function r()                     -> function advanceStep()
+419: function s(e, n)                 -> function playNote(channel, time)
+426: function a(e, n)                 -> function playAccent(channel, time)
+436: function o(e)                    -> function playStep(time)
+437: function t(e)                    -> function applySwing(rhythm)
+441: function n()                     -> function swingQuadruple()
+445: function i()                     -> function swingCompound()
+455: function l(e, t)                 -> function play(pattern, times)
+461: function c(e)                    -> function initPattern(patternData)
+491: function d(e)                    -> function stringToArray(str)
+494: function h()                     -> function startScheduling()
+497: function m()                     -> function stop()
+503: function u(e)                    -> function init(options)
+
+SequencerView (line 530):
+530: A = Backbone.View.extend({       -> SequencerView = Backbone.View.extend({
+532: initialize: function (e)         -> initialize: function (options)
+570: onSetSteps: function (newSteps)   -> (already descriptive)
+590: settPatternFromTact: function (e)-> settPatternFromTact: function (patternData)
+610: setPattern: function (e)         -> setPattern: function (patternData)
+
+ChannelView (line 648):
+648: O = Backbone.View.extend({       -> ChannelView = Backbone.View.extend({
+656: initialize: function (e)         -> initialize: function (options)
+723: onNoteClick: function (e)        -> onNoteClick: function (event)
+753: onMuteClick: function (e)        -> onMuteClick: function (event)
+
+--- Transport IIFE (line 774) ---
+775: function e()                     -> function requestPlay()
+778: function t()                     -> function requestStop()
+781: function n(e)                    -> function init(options)
+856: a = Backbone.View.extend({       -> TransportView = Backbone.View.extend({
+870: initialize: function (n)         -> initialize: function (options)
+989: onIncomingTempoChange: function (e) -> (already descriptive)
+993: keydown: function (n)            -> keydown: function (event)
+1014: keyup: function (e)             -> keyup: function (event)
+1017: onClearBtnClick: function (e)   -> onClearBtnClick: function (event)
+1035: hideDropdown: function (e)      -> hideDropdown: function (event)
+1038: showDropdown: function (e)      -> showDropdown: function (event)
+1044: onBeatClick: function (e)       -> onBeatClick: function (event)
+1064: onPresetSelectChange: function ()-> (already fine)
+1088: onSavePreset: function ()       -> (already fine)
+
+--- PresetList IIFE (line 1102) ---
+1103: function e(e)                   -> function init(options)
+1433: s = Backbone.View.extend({      -> PresetListView = Backbone.View.extend({
+1435: initialize: function ()         -> (already fine)
+1451: onPresetClick: function (e)     -> onPresetClick: function (event)
+
+--- SoundTypes IIFE (line 1482) ---
+1483: function e(e)                   -> function init(options)
+1495: r = Backbone.View.extend({      -> SoundTypesView = Backbone.View.extend({
+1514: onSoundClick: function (e)      -> onSoundClick: function (event)
+
+--- TimeSignature IIFE (line 1529) ---
+1530: function e(e)                   -> function init(options)
+1597: s = Backbone.View.extend({      -> TimeSignatureView = Backbone.View.extend({
+1614: onBeatClick: function (e)       -> onBeatClick: function (event)
+
+--- SwingRhythm IIFE (line 1648) ---
+1649: function e(e)                   -> function init(options)
+1653: i = Backbone.View.extend({      -> SwingRhythmView = Backbone.View.extend({
+1665: onSwingClick: function (e)      -> onSwingClick: function (event)
+
+--- Modal IIFE (line 1709) ---
+1710: function e(e)                   -> function init(options)
+1714: i = Backbone.View.extend({      -> ModalView = Backbone.View.extend({
+1728: outsideClick: function (e)      -> outsideClick: function (event)
+1733: toggleDropdown: function (e)    -> toggleDropdown: function (event)
+
+--- Mixer IIFE (line 1750) ---
+1751: function e(e)                   -> function init(options)
+1757: s = Backbone.View.extend({      -> MixerView = Backbone.View.extend({
+1765: render: function ()             -> (already fine)
+1797: onFaderChange: function (e)     -> onFaderChange: function (event)
+1803: onEQChange: function (e)        -> onEQChange: function (event)
+1827: onFXChange: function (e)        -> onFXChange: function (event)
+
+--- App (line 1853) ---
+     (already uses descriptive names)
+
+=== KEY CLOSURE VARIABLES (for reference) ===
+SampleBank: o  -> sampleBuffers,  l -> loadedCount,  c -> totalCount,  d -> api
+Sequencer:  p  -> bpm,  g -> interval,  v -> nextEventTime,  E -> startOffset,
+            f  -> timerId,  _  -> currentStep,  w -> isPlaying,
+            S  -> currentPattern,  P -> activeChannels,  R -> noteState
+
+=== VIEW CLASS VARIABLE NAMES ===
+A -> SequencerView,  O -> ChannelView
+Transport: a  -> TransportView
+PresetList: s -> PresetListView
+SoundTypes: r -> SoundTypesView
+TimeSignature: s -> TimeSignatureView
+SwingRhythm: i -> SwingRhythmView
+Modal: i -> ModalView
+Mixer: s -> MixerView
