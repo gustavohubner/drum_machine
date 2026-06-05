@@ -206,6 +206,14 @@
   border-color: #f59e0b;
   box-shadow: 0 0 8px rgba(245,158,11,.3);
 }
+.seq-ui .seq-row span.seq-note-yellow:not(.seq-active) {
+  background: #635146;
+  border-color: #635146;
+  box-shadow: none;
+}
+.seq-ui .seq-row span.seq-note-yellow:not(.seq-active):hover {
+  background: #796558;
+}
 .seq-ui .seq-row span.seq-note-empty {
   background: rgba(239,68,68,.15);
   border-color: rgba(239,68,68,.25);
@@ -761,6 +769,11 @@ input.active + .slider:before {
 .saved-presets li:hover {
   background: #1f2937;
   color: #fff;
+}
+
+/* ===== FILL VISUAL INDICATION ===== */
+#sequencer-panel.fill-active .grid-item-body {
+  background-color: #2a1d45;
 }
 
 /* ===== FILL BUTTON ===== */

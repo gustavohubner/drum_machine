@@ -455,6 +455,7 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
           fillOneShotActive = !1
           normalPatternBackup = null
           $('#fill-in-button').removeClass('fill-active')
+          $('#sequencer-panel').removeClass('fill-active')
           if (sequencerViewInstance) {
             for (var ch in sequencerViewInstance.channelViews) {
               sequencerViewInstance.channelViews[ch].model = currentPattern[ch]
@@ -492,6 +493,8 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
         }
         fillOneShotActive = !0
         fillOneShotStepsLeft = numSteps
+        $('#fill-in-button').addClass('fill-active')
+        $('#sequencer-panel').addClass('fill-active')
         if (sequencerViewInstance) {
           for (var ch in sequencerViewInstance.channelViews) {
             sequencerViewInstance.channelViews[ch].model = currentPattern[ch]
@@ -594,8 +597,9 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
             sequencerViewInstance.channelViews[ch].render()
           }
         }
+        $('#fill-in-button').addClass('fill-active')
+        $('#sequencer-panel').addClass('fill-active')
       }
-      $('#fill-in-button').addClass('fill-active')
     }
     function init(options) {
       dispatcher.register(eventKeys), new SequencerView(options).render(), setTempo(90), (initialized = !0)
@@ -694,6 +698,7 @@ var thisBpm,
             this.channelViews[ch].render()
           }
           $('#fill-in-button').toggleClass('fill-active', url_collection.fillActive)
+          $('#sequencer-panel').toggleClass('fill-active', url_collection.fillActive)
           generateURL()
         },
         onSetSteps: function (newSteps) {
@@ -726,6 +731,7 @@ var thisBpm,
         },
         settPatternFromTact: function (patternData) {
           $('#fill-in-button').removeClass('fill-active')
+          $('#sequencer-panel').removeClass('fill-active')
           initPattern(patternData), this.render(), (currentPatternForSwing = patternData), (noteState = {})
           for (var ch in this.channelViews) {
             this.channelViews[ch].undelegateEvents()
@@ -748,6 +754,7 @@ var thisBpm,
         setPattern: function (patternData) {
           url_collection.fillActive = !1
           $('#fill-in-button').removeClass('fill-active')
+          $('#sequencer-panel').removeClass('fill-active')
           initPattern(patternData), this.render(), (currentPatternForSwing = patternData)
           var idx = 0
           for (var ch in this.channelViews) {
@@ -1216,8 +1223,6 @@ var thisBpm,
             : (url_collection.sequence = currentPatternForSwing.sequence)
           $('.clearBtn').addClass('clearBtn-disabled')
           resetURL(),
-            $('.presetsBtn').text(BUTTON_NAMES.presetsButtonName),
-            $('.preset_active').removeClass('active'),
             dispatcher.trigger(
               dispatcher.EventKeys.SEQUENCER_SET_PATTERN_FROM_TACT,
               currentPatternForSwing
@@ -1294,386 +1299,6 @@ var thisBpm,
         },
       })
     return { init: init }
-  })(),
-  PresetList = (function () {
-    function init(options) {
-      dispatcher.register(eventKeys), new PresetListView(options).render()
-    }
-    var eventKeys = { PRESET_SELECTED: 'preset:selected' },
-      presetData = {
-        'Pop/rock 1': {
-          tempo: 90,
-          name: 'Pop/rock 1',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1000000010000000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock 2': {
-          tempo: 90,
-          name: 'Pop/rock 2',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1000000010100000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock 3': {
-          tempo: 90,
-          name: 'Pop/rock 3',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1000001010000000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock 4': {
-          tempo: 90,
-          name: 'Pop/rock 4',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1000001000100000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock 5': {
-          tempo: 90,
-          name: 'Pop/rock 5',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1000000100100000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock 6': {
-          tempo: 90,
-          name: 'Pop/rock 6',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '0010000010000000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Pop/rock i 3/4': {
-          tempo: 110,
-          name: 'Pop/rock i 3/4',
-          sequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            hihat: '101010101010',
-            lilletromme: '000000001000',
-            stortromme: '100000100000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '3/4'
-        },
-        'Pop/rock i 6/8': {
-          tempo: 180,
-          name: 'Pop/rock i 6/8',
-          sequence: {
-            hihatfod: '000000000000',
-            sidetamlys: '000000000000',
-            gulvtam: '000000000000',
-            ride: '000000000000',
-            hihat: '101010101010',
-            lilletromme: '000000100000',
-            stortromme: '100000000000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '6/8'
-        },
-        'Jazz 1': {
-          tempo: 110,
-          name: 'Jazz 1',
-          sequence: {
-            hihatfod: '0000100000001000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '1000101010001010',
-            hihat: '0000000000000000',
-            lilletromme: '0000000000000000',
-            stortromme: '0000000000000000'
-          },
-          muted: {},
-          swing: !0,
-          rhythm: '4/4'
-        },
-        'Jazz 2': {
-          tempo: 110,
-          name: 'Jazz 2',
-          sequence: {
-            hihatfod: '0000100000001000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '1000101010001010',
-            hihat: '0000000000000000',
-            lilletromme: '0000000000001000',
-            stortromme: '1000000000000000'
-          },
-          muted: {},
-          swing: !0,
-          rhythm: '4/4'
-        },
-        'Jazz 3': {
-          tempo: 110,
-          name: 'Jazz 3',
-          sequence: {
-            hihatfod: '0000100000001000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '1000101010001010',
-            hihat: '0000000000000000',
-            lilletromme: '0000000000100000',
-            stortromme: '0000001000000000'
-          },
-          muted: {},
-          swing: !0,
-          rhythm: '4/4'
-        },
-        'Jazz 4': {
-          tempo: 110,
-          name: 'Jazz 4',
-          sequence: {
-            hihatfod: '0000100000001000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '1010101010101010',
-            hihat: '0000000000000000',
-            lilletromme: '0020000000002000',
-            stortromme: '1000000010000000'
-          },
-          muted: {},
-          swing: !0,
-          rhythm: '4/4'
-        },
-        'Funk 1': {
-          tempo: 110,
-          name: 'Funk 1',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101010',
-            lilletromme: '0000100101001100',
-            stortromme: '1000000000100001'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Funk 2': {
-          tempo: 90,
-          name: 'Funk 2',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1111112111111121',
-            lilletromme: '0000100101011000',
-            stortromme: '1010000010100100'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Disco 1': {
-          tempo: 90,
-          name: 'Disco 1',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1020102010201020',
-            lilletromme: '0000100000001000',
-            stortromme: '1000100010001000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Disco 2': {
-          tempo: 110,
-          name: 'Disco 2',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1020101110201011',
-            lilletromme: '0000100000001000',
-            stortromme: '1000100010001000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Rap 1': {
-          tempo: 80,
-          name: 'Rap 1',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '0110101010101010',
-            lilletromme: '0000100000001000',
-            stortromme: '1010001001000000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Rap 2': {
-          tempo: 90,
-          name: 'Rap 2',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '1010101010101020',
-            lilletromme: '0000100000001000',
-            stortromme: '1011011001100000'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Heavy metal 1': {
-          tempo: 90,
-          name: 'Heavy metal 1',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '2020202020202020',
-            lilletromme: '0000100000001010',
-            stortromme: '1011001111000001'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        },
-        'Heavy metal 2': {
-          tempo: 90,
-          name: 'Heavy metal 2',
-          sequence: {
-            hihatfod: '0000000000000000',
-            sidetamlys: '0000000000000000',
-            gulvtam: '0000000000000000',
-            ride: '0000000000000000',
-            hihat: '2020202020202020',
-            lilletromme: '0000100000001000',
-            stortromme: '1110001110010011'
-          },
-          muted: {},
-          swing: !1,
-          rhythm: '4/4'
-        }
-      },
-      presetIdx = 0
-    _.forOwn(presetData, function (data) {
-      ; (presetIdx += 1), (data.name = BUTTON_NAMES.presets[presetIdx])
-    })
-    var PresetListView = Backbone.View.extend({
-        events: { 'click .preset-item': 'onPresetClick' },
-        initialize: function () {
-          this.listenTo(
-            dispatcher,
-            dispatcher.EventKeys.PRESET_SELECTED,
-            this.onPresetSelected
-          )
-        },
-        render: function () {
-          var html = ''
-          for (var key in presetData) {
-            html += '<li data-preset-id="' + key + '" class="preset-item">' + presetData[key].name + '</li>'
-          }
-          this.$el.html(html)
-          this.$items = this.$el.find('.preset-item')
-          return this
-        },
-        onPresetClick: function (event) {
-          event.preventDefault()
-          var label = $(event.currentTarget).text(),
-            id = $(event.currentTarget).attr('data-preset-id'),
-            rhythm = presetData[id].rhythm,
-            swing = presetData[id].swing,
-            tempo = presetData[id].tempo,
-            adjustedTempo = presetData[id].tempo
-          swing ? ((adjustedTempo /= 1.33), (swing_toggler = !0)) : (swing_toggler = !1),
-            $('.swing-toggle').toggleClass('active', swing_toggler),
-            this.$items.removeClass('preset_active active'),
-            $('.set-beat').removeClass('active'),
-            $('.dropdown ul').removeClass('active'),
-            $(event.currentTarget).addClass('preset_active active'),
-            $('.presetsBtn').text(label),
-            $('.beatTime').text(rhythm),
-            $('.clearBtn').removeClass('clearBtn-disabled'),
-            (url_collection.tempo = tempo),
-            (url_collection.rhythm = rhythm),
-            (url_collection.swing = swing_toggler),
-            generateURL(),
-            dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, presetData[id]),
-            dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, adjustedTempo)
-        }
-      })
-    return {
-      init: init,
-      getPresetData: function (name) { return presetData[name] },
-      getAllPresetNames: function () { return Object.keys(presetData) }
-    }
   })(),
   SoundTypes = (function () {
     function init(options) {
@@ -1854,7 +1479,6 @@ var thisBpm,
             $(event.currentTarget).addClass('beat_active active'),
             $('.dropdown ul').removeClass('active'),
             $('.beatTime').text(beat),
-            $('.presetsBtn').text(BUTTON_NAMES.presetsButtonName),
             $('.clearBtn').addClass('clearBtn-disabled')
           var tempo = parseInt($('.transport-tempo-display').val(), 10) || 90
           currentPatternForSwing = emptyPatternData[beat] || currentPatternForSwing
@@ -1909,6 +1533,7 @@ var thisBpm,
           if (url_collection.fillActive) {
             url_collection.fillActive = !1
             $('#fill-in-button').removeClass('fill-active')
+            $('#sequencer-panel').removeClass('fill-active')
           }
           swing_toggler = !swing_toggler
           var rows = $('#sequencer-panel').find('.seq-row'),
