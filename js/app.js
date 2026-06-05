@@ -438,9 +438,31 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       timerId = setTimeout(scheduleLoop, 0)
     }
     function advanceStep() {
-      currentStep++
       var patternLen = currentPattern.hihat.length
-      currentStep >= patternLen && (currentStep = 0), (nextEventTime += interval)
+      currentStep++
+      if (currentStep >= patternLen) {
+        currentStep = 0
+      }
+      nextEventTime += interval
+      if (fillOneShotActive) {
+        fillOneShotStepsLeft--
+        if (fillOneShotStepsLeft <= 0) {
+          if (normalPatternBackup) {
+            for (var ch in normalPatternBackup) {
+              if (currentPattern[ch]) currentPattern[ch] = normalPatternBackup[ch]
+            }
+          }
+          fillOneShotActive = !1
+          normalPatternBackup = null
+          $('#fill-in-button').removeClass('fill-active')
+          if (sequencerViewInstance) {
+            for (var ch in sequencerViewInstance.channelViews) {
+              sequencerViewInstance.channelViews[ch].model = currentPattern[ch]
+              sequencerViewInstance.channelViews[ch].render()
+            }
+          }
+        }
+      }
     }
     function playNote(channel, time) {
       var noteVal = currentPattern[channel][currentStep]
@@ -460,6 +482,23 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
           dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_NOTE_PLAY, channel))
     }
     function playStep(time) {
+      if (fillPending && currentStep === 1) {
+        fillPending = !1
+        normalPatternBackup = {}
+        for (var ch in currentPattern) normalPatternBackup[ch] = currentPattern[ch].slice()
+        var fillSrc = url_collection.fillSequence || url_collection.sequence
+        for (var ch in fillSrc) {
+          if (currentPattern[ch]) currentPattern[ch] = stringToArray(fillSrc[ch])
+        }
+        fillOneShotActive = !0
+        fillOneShotStepsLeft = numSteps
+        if (sequencerViewInstance) {
+          for (var ch in sequencerViewInstance.channelViews) {
+            sequencerViewInstance.channelViews[ch].model = currentPattern[ch]
+            sequencerViewInstance.channelViews[ch].render()
+          }
+        }
+      }
       function applySwing(rhythm) {
         '4/4' === rhythm || '3/4' === rhythm ? swingQuadruple() : ('5/4' !== rhythm && '6/8' !== rhythm) || swingCompound(),
           currentStep >= stepsPerBeat + 1 && (currentStep = 0)
@@ -526,10 +565,37 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       ; (isPlaying = !0), (nextEventTime = 0), (startOffset = ctx.currentTime + 0.005), scheduleLoop()
     }
     function stop() {
+      fillOneShotActive = !1
+      fillOneShotStepsLeft = 0
+      fillPending = !1
+      normalPatternBackup = null
       ; (isPlaying = !1),
         (currentStep = 0),
         $('#play').removeClass('btn-pause').addClass('btn-play').html('<i class="fas fa-play"></i>'),
         dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_STEP, currentStep)
+    }
+    function triggerOneShotFill() {
+      if (!initialized || !isPlaying) return
+      if (fillOneShotActive || fillPending) return
+      if (currentStep >= numSteps - 4) {
+        fillPending = !0
+      } else {
+        normalPatternBackup = {}
+        for (var ch in currentPattern) normalPatternBackup[ch] = currentPattern[ch].slice()
+        var fillSrc = url_collection.fillSequence || url_collection.sequence
+        for (var ch in fillSrc) {
+          if (currentPattern[ch]) currentPattern[ch] = stringToArray(fillSrc[ch])
+        }
+        fillOneShotActive = !0
+        fillOneShotStepsLeft = currentStep > 0 ? numSteps - currentStep + 1 : numSteps
+        if (sequencerViewInstance) {
+          for (var ch in sequencerViewInstance.channelViews) {
+            sequencerViewInstance.channelViews[ch].model = currentPattern[ch]
+            sequencerViewInstance.channelViews[ch].render()
+          }
+        }
+      }
+      $('#fill-in-button').addClass('fill-active')
     }
     function init(options) {
       dispatcher.register(eventKeys), new SequencerView(options).render(), setTempo(90), (initialized = !0)
@@ -550,7 +616,8 @@ var thisBpm,
         SEQUENCER_STEP: 'sequencer:step',
         SEQUENCER_NOTE_PLAY: 'sequencer:noteplay',
         SEQUENCER_SET_STEPS: 'sequencer:setsteps',
-        SEQUENCER_SET_FILL: 'sequencer:setfill'
+        SEQUENCER_SET_FILL: 'sequencer:setfill',
+        SEQUENCER_ONE_SHOT_FILL: 'sequencer:oneshotfill'
       },
       initialized = !1,
       currentStep = 0,
@@ -559,9 +626,15 @@ var thisBpm,
       activeChannels = {},
       noteState = {},
       mutedChannels = {},
+      fillOneShotActive = !1,
+      fillOneShotStepsLeft = 0,
+      fillPending = !1,
+      normalPatternBackup = null,
+      sequencerViewInstance = null,
       SequencerView = Backbone.View.extend({
         channelViews: {},
         initialize: function (options) {
+          sequencerViewInstance = this
           this.listenTo(dispatcher, dispatcher.EventKeys.SEQUENCER_PLAY, play),
             this.listenTo(
               dispatcher,
@@ -602,10 +675,19 @@ var thisBpm,
               dispatcher,
               dispatcher.EventKeys.SEQUENCER_SET_FILL,
               this.setFill
+            ),
+            this.listenTo(
+              dispatcher,
+              dispatcher.EventKeys.SEQUENCER_ONE_SHOT_FILL,
+              triggerOneShotFill
             )
         },
         setFill: function () {
           if (!currentPatternForSwing) return
+          for (var ch in url_collection.sequence)
+            currentPatternForSwing.sequence[ch] = url_collection.sequence[ch]
+          for (var ch in url_collection.fillSequence)
+            currentPatternForSwing.fillSequence[ch] = url_collection.fillSequence[ch]
           initPattern(currentPatternForSwing)
           for (var ch in this.channelViews) {
             this.channelViews[ch].model = currentPattern[ch]
@@ -1014,8 +1096,12 @@ var thisBpm,
               dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_CLEAR)
             }),
             $(document).on('click', '#fill-in-button', function () {
-              url_collection.fillActive = !url_collection.fillActive
-              dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_FILL)
+              if ($('#play').hasClass('btn-pause')) {
+                dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_ONE_SHOT_FILL)
+              } else {
+                url_collection.fillActive = !url_collection.fillActive
+                dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_FILL)
+              }
             }),
             $(document).on('click', '.steps-minus', function () {
               var cur = parseInt($('.transport-steps-display').val(), 10) || 16
@@ -1117,21 +1203,18 @@ var thisBpm,
           32 === event.keyCode && (this.spacePressed = !1)
         },
         onClearBtnClick: function (event) {
-          event && event.preventDefault(),
-            (currentPatternForSwing =
-              emptyPatterns[currentPatternForSwing.rhythm] || currentPatternForSwing),
-            $('.clearBtn').addClass('clearBtn-disabled')
-          for (var ch in currentPatternForSwing.sequence)
-            (currentPatternForSwing.sequence[ch] =
-              currentPatternForSwing.sequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.sequence[ch] =
-                currentPatternForSwing.sequence[ch].replace(/2/g, '0'))
-          for (var ch in currentPatternForSwing.fillSequence)
-            (currentPatternForSwing.fillSequence[ch] =
-              currentPatternForSwing.fillSequence[ch].replace(/1/g, '0')),
-              (currentPatternForSwing.fillSequence[ch] =
-                currentPatternForSwing.fillSequence[ch].replace(/2/g, '0'))
-          url_collection.fillActive = !1
+          event && event.preventDefault()
+          for (var ch in url_collection.sequence)
+            currentPatternForSwing.sequence[ch] = url_collection.sequence[ch]
+          for (var ch in url_collection.fillSequence)
+            currentPatternForSwing.fillSequence[ch] = url_collection.fillSequence[ch]
+          var target = url_collection.fillActive ? currentPatternForSwing.fillSequence : currentPatternForSwing.sequence
+          for (var ch in target)
+            target[ch] = target[ch].replace(/1/g, '0').replace(/2/g, '0')
+          url_collection.fillActive
+            ? (url_collection.fillSequence = currentPatternForSwing.fillSequence)
+            : (url_collection.sequence = currentPatternForSwing.sequence)
+          $('.clearBtn').addClass('clearBtn-disabled')
           resetURL(),
             $('.presetsBtn').text(BUTTON_NAMES.presetsButtonName),
             $('.preset_active').removeClass('active'),

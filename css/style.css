@@ -769,7 +769,7 @@ input.active + .slider:before {
   transition: background .15s, color .15s;
 }
 #fill-in-button.fill-active {
-  background: #f59e0b !important;
-  color: #000 !important;
-  box-shadow: 0 0 12px rgba(245,158,11,.5);
+  background: #dc2626 !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(220,38,38,.5);
 }
