@@ -14,7 +14,7 @@
   <div class="wrapper">
     <div class="grid-container">
 
-      <!-- ===== ROW 1: TITLE ===== -->
+      <!-- ===== TITLE ===== -->
       <div class="grid-item" style="grid-column:8 / span 3; grid-row:1 / span 1;">
         <div class="panel h-full p-0">
           <div class="grid-item-body flex-row items-center justify-between flex-1 py-1 px-2.5">
@@ -40,7 +40,7 @@
         </div>
       </div>
 
-      <!-- ===== ROW 2-3: PLAY ===== -->
+      <!-- ===== PLAY ===== -->
       <div id="transport-panel" class="grid-item" style="grid-column:1 / span 1; grid-row:1 / span 2;">
         <div class="panel h-full p-0 overflow-hidden flex items-stretch justify-stretch">
           <button id="play" class="btn-play bg-gray-700 text-white hover:bg-gray-600 flex-1 flex items-center justify-center leading-none text-xl"
@@ -50,8 +50,8 @@
         </div>
       </div>
 
-      <!-- fill in button -->
-      <div class="grid-item" style="grid-column:8 / span 1; grid-row:2 / span 2;">
+      <!-- ===== FILL-IN ===== -->
+      <div class="grid-item" style="grid-column:2 / span 1; grid-row:1 / span 2;">
         <div class="panel h-full p-0 overflow-hidden flex items-stretch justify-stretch">
           <button id="fill-in-button" class="bg-gray-700 text-white hover:bg-gray-600 flex-1 flex items-center justify-center leading-none text-xl rounded"
             title="Fill-in">
@@ -60,8 +60,19 @@
         </div>
       </div>
 
+      <!-- ===== TAP BPM ===== -->
+      <div class="grid-item" style="grid-column:8 / span 1; grid-row:2 / span 2;">
+        <div class="panel h-full p-0 overflow-hidden flex items-stretch justify-stretch">
+          <button id="tap-bpm-button" class="bg-gray-700 text-white hover:bg-gray-600 flex-1 flex items-center justify-center leading-none text-xl rounded"
+            title="Tap BPM">
+            <div class="text-lg font-bold text-gray-300">TAP<br/>BPM</div>
+          </button>
+        </div>
+      </div>
 
-      <!-- ===== ROW 2: BPM ===== -->
+
+
+      <!-- ===== BPM ===== -->
       <div class="grid-item" style="grid-column:9 / span 2; grid-row:2 / span 1;">
         <div class="panel h-full p-0 flex flex-col">
           <div class="flex-row items-center gap-1 flex-1 min-w-0 px-2"
@@ -78,7 +89,7 @@
         </div>
       </div>
 
-      <!-- ===== ROW 3: STEPS ===== -->
+      <!-- ===== STEPS ===== -->
       <div class="grid-item" style="grid-column:9 / span 2; grid-row:3 / span 1;">
         <div class="panel h-full p-0 flex flex-col">
           <div class="flex-row items-center gap-1 flex-1 min-w-0 px-2"
@@ -95,8 +106,8 @@
         </div>
       </div>
 
-      <!-- ===== ROW 1-2: MEMORY PRESETS ===== -->
-      <div class="grid-item" style="grid-column:2 / span 6; grid-row:1 / span 2;">
+      <!-- ===== MEMORY PRESETS ===== -->
+      <div class="grid-item" style="grid-column:3 / span 5; grid-row:1 / span 2;">
         <div class="panel">
           <div class="grid-item-header horizontal-wrapper justify-between">
             <div>Memory Presets</div>
@@ -130,7 +141,7 @@
         </div>
       </div>
 
-      <!-- ===== ROW 3-10: SEQUENCER ===== -->
+      <!-- ===== SEQUENCER ===== -->
       <div id="sequencer-panel" class="grid-item" style="grid-column:1 / span 7; grid-row:3 / span 7;">
         <div class="panel h-full p-0">
           <div class="grid-item-header">Sequencer</div>
@@ -264,7 +275,7 @@
       </div>
 
 
-      <!-- ===== ROW 12+: CHANNELS ===== -->
+      <!-- ===== CHANNELS ===== -->
       <div id="channels-panel" class="grid-item" style="grid-column:1 / span 7; grid-row:10 / span 4;">
         <div class="panel h-full p-0">
           <div class="grid-item-header">Channels</div>
@@ -386,6 +397,9 @@
               </label>
             </div>
           </div>
+        </div>
+        <div class="modal-item">
+          <button class="delete-preset w-full bg-red-700 hover:bg-red-600 text-white py-2 rounded text-sm font-bold">Delete Preset</button>
         </div>
       </div>
     </div>

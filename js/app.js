@@ -1081,7 +1081,8 @@ var thisBpm,
                   $('.dropdown__content').removeClass('active'))
             }),
             $(document).on('click', '.save-preset', this.onSavePreset.bind(this)),
-            $(document).on('click', '.load-presets-btn', this.populatePresetSelect.bind(this)),
+            $(document).on('click', '.load-presets-btn', this.onLoadPreset.bind(this)),
+            $(document).on('click', '.delete-preset', this.onDeletePreset.bind(this)),
             $(document).on('change', '#global-preset-select', this.onPresetSelectChange.bind(this)),
             $(document).on('click', '#global-prev-preset', function () {
               var sel = $('#global-preset-select')[0]
@@ -1089,7 +1090,6 @@ var thisBpm,
               var len = sel.options.length
               if (len <= 1) return
               sel.selectedIndex = (sel.selectedIndex - 1 + len) % len
-              $(sel).trigger('change')
             }),
             $(document).on('click', '#global-next-preset', function () {
               var sel = $('#global-preset-select')[0]
@@ -1097,7 +1097,6 @@ var thisBpm,
               var len = sel.options.length
               if (len <= 1) return
               sel.selectedIndex = (sel.selectedIndex + 1) % len
-              $(sel).trigger('change')
             }),
             $(document).on('click', '.clearBtn', function (event) {
               event.preventDefault()
@@ -1111,6 +1110,34 @@ var thisBpm,
                 dispatcher.trigger(dispatcher.EventKeys.SEQUENCER_SET_FILL)
               }
             }),
+            (function (view) {
+              view.tapTimes = []
+              view.lastTapTimeout = null
+              $(document).on('click', '#tap-bpm-button', function () {
+                var now = Date.now()
+                var btn = $('#tap-bpm-button')
+                btn.addClass('tap-active')
+                clearTimeout(view.lastTapTimeout)
+                view.lastTapTimeout = setTimeout(function () { btn.removeClass('tap-active') }, 200)
+                if (view.tapTimes.length && now - view.tapTimes[view.tapTimes.length - 1] > 2000) {
+                  view.tapTimes = []
+                }
+                view.tapTimes.push(now)
+                if (view.tapTimes.length > 4) view.tapTimes.shift()
+                if (view.tapTimes.length < 2) return
+                var intervals = []
+                for (var i = 1; i < view.tapTimes.length; i++) {
+                  intervals.push(view.tapTimes[i] - view.tapTimes[i - 1])
+                }
+                var sum = 0
+                for (var j = 0; j < intervals.length; j++) sum += intervals[j]
+                var avgInterval = sum / intervals.length
+                var bpm = Math.round(60000 / avgInterval)
+                if (bpm < 30) bpm = 30
+                if (bpm > 250) bpm = 250
+                $('.transport-tempo-display').val(bpm).trigger('change')
+              })
+            })(this),
             $(document).on('click', '.steps-minus', function () {
               var cur = parseInt($('.transport-steps-display').val(), 10) || 16
               if (cur > 1) $('.transport-steps-display').val(cur - 1)
@@ -1259,8 +1286,9 @@ var thisBpm,
           }
         },
         onPresetSelectChange: function () {
-          var val = $('#global-preset-select').val()
-          if (!val) return
+          // Selection only - no load
+        },
+        loadPresetByName: function (val) {
           var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
           var preset = saved[val]
           if (!preset) return
@@ -1295,15 +1323,26 @@ var thisBpm,
             ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, url_collection),
               dispatcher.trigger(dispatcher.EventKeys.SWING_SELECTED))
             : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, url_collection),
-              dispatcher.trigger(
-                dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED,
-                url_collection.tempo
-              ))
+              dispatcher.trigger(dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED, url_collection.tempo))
+        },
+        onLoadPreset: function () {
+          var val = $('#global-preset-select').val()
+          this.populatePresetSelect()
+          if (!val) return
+          $('#global-preset-select').val(val)
+          this.loadPresetByName(val)
         },
         onSavePreset: function () {
-          var name = prompt('Preset name:')
-          if (!name) return
+          var sel = $('#global-preset-select')
+          var val = sel.val()
           var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
+          var name
+          if (val) {
+            name = val
+          } else {
+            name = prompt('Preset name:')
+            if (!name) return
+          }
           saved[name] = {
             sequence: JSON.parse(JSON.stringify(url_collection.sequence)),
             fillSequence: JSON.parse(JSON.stringify(url_collection.fillSequence)),
@@ -1315,6 +1354,16 @@ var thisBpm,
             sound: url_collection.sound || 'standard',
             steps: numSteps
           }
+          localStorage.setItem('drum_saved_presets', JSON.stringify(saved))
+          this.populatePresetSelect()
+          sel.val(name)
+        },
+        onDeletePreset: function () {
+          var val = $('#global-preset-select').val()
+          if (!val) return
+          if (!confirm('Delete preset "' + val + '"?')) return
+          var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
+          delete saved[val]
           localStorage.setItem('drum_saved_presets', JSON.stringify(saved))
           this.populatePresetSelect()
         },
