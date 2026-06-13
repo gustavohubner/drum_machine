@@ -2,8 +2,8 @@ function generateURL() {
   function encodeSequence(sequence) {
     var t = '',
       n = '',
-      i = 'abcdefghijklmnop',
-      r = 'qrstuvwxyzabcdef',
+      i = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_',
+      r = 'mnopqrstuvwxyzabcdefghijklABCDEFGHIJKLMNOPQRSTUVWXYZ3456789012-_',
       s = {
         hihatfod: 1,
         sidetamlys: 2,
@@ -90,8 +90,8 @@ function decodeURL(data, fillData) {
         6: 'lilletromme',
         7: 'stortromme'
       },
-      normalAlphabet = 'abcdefghijklmnop',
-      accentAlphabet = 'qrstuvwxyzabcdef'
+      normalAlphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_',
+      accentAlphabet = 'mnopqrstuvwxyzabcdefghijklABCDEFGHIJKLMNOPQRSTUVWXYZ3456789012-_'
     normalPart && decodePart(normalPart, normalAlphabet, 1, steps, result, channelMap), accentPart && decodePart(accentPart, accentAlphabet, 2, steps, result, channelMap)
     for (var channel in result) result[channel] = result[channel].join('')
     return result
@@ -188,6 +188,7 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       sidetamlys: '',
       gulvtam: '',
       ride: '',
+      crash: '',
       hihat: '',
       lilletromme: '',
       stortromme: ''
@@ -197,6 +198,7 @@ var AUDIO = new (window.AudioContext || window.webkitAudioContext)(),
       sidetamlys: '',
       gulvtam: '',
       ride: '',
+      crash: '',
       hihat: '',
       lilletromme: '',
       stortromme: ''
@@ -609,7 +611,6 @@ var thisBpm,
   nextEventTime,
   startOffset,
   timerId,
-  numSteps = 16,
   eventKeys = {
         SEQUENCER_PLAY: 'sequencer:play',
         SEQUENCER_STOP: 'sequencer:stop',
@@ -1261,39 +1262,59 @@ var thisBpm,
           var val = $('#global-preset-select').val()
           if (!val) return
           var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
-          var urlData = saved[val]
-          if (!urlData) return
-          var parts = urlData.split('||fill||'),
-            mainData = parts[0],
-            fillData = parts[1] || null
-          var decoded = fillData ? decodeURL(mainData, fillData) : decodeURL(mainData)
-          if (!decoded) return
-          url_collection = decoded
-          numSteps = decoded.steps || 16
+          var preset = saved[val]
+          if (!preset) return
+          if (typeof preset === 'string') {
+            var parts = preset.split('||fill||'),
+              mainData = parts[0],
+              fillData = parts[1] || null
+            var decoded = fillData ? decodeURL(mainData, fillData) : decodeURL(mainData)
+            if (!decoded) return
+            url_collection = decoded
+            numSteps = decoded.steps || 16
+            window.history.replaceState('', '', '?data=' + encodeURIComponent(mainData) + '&data_fill=' + encodeURIComponent(fillData || ''))
+          } else {
+            url_collection = {
+              sequence: JSON.parse(JSON.stringify(preset.sequence)),
+              fillSequence: JSON.parse(JSON.stringify(preset.fillSequence || preset.sequence)),
+              fillActive: preset.fillActive || false,
+              muted: preset.muted || {},
+              rhythm: preset.rhythm || '4/4',
+              tempo: preset.tempo || 90,
+              swing: preset.swing || false,
+              sound: preset.sound || 'standard'
+            }
+            numSteps = preset.steps || 16
+            window.history.replaceState('', '', window.location.pathname)
+          }
           $('.transport-steps-display').val(numSteps)
-          'standard' !== decoded.sound &&
-            $('.sound-types-button').text(SOUND_TYPES[decoded.sound])
-          dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, decoded.sound)
-          decoded.swing
-            ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, decoded),
+          'standard' !== url_collection.sound &&
+            $('.sound-types-button').text(SOUND_TYPES[url_collection.sound])
+          dispatcher.trigger(dispatcher.EventKeys.SOUND_SELECTED, url_collection.sound)
+          url_collection.swing
+            ? (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, url_collection),
               dispatcher.trigger(dispatcher.EventKeys.SWING_SELECTED))
-            : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, decoded),
+            : (dispatcher.trigger(dispatcher.EventKeys.PRESET_SELECTED, url_collection),
               dispatcher.trigger(
                 dispatcher.EventKeys.TRANSPORT_TEMPO_CHANGED,
-                decoded.tempo
+                url_collection.tempo
               ))
-          window.history.replaceState('', '', '?data=' + encodeURIComponent(mainData) + '&data_fill=' + encodeURIComponent(fillData || ''))
         },
         onSavePreset: function () {
           var name = prompt('Preset name:')
           if (!name) return
-          generateURL()
-          var urlObj = new URL(window.location.href),
-            dataPart = urlObj.searchParams.get('data'),
-            fillPart = urlObj.searchParams.get('data_fill') || ''
-          if (!dataPart) return
           var saved = JSON.parse(localStorage.getItem('drum_saved_presets') || '{}')
-          saved[name] = dataPart + '||fill||' + fillPart
+          saved[name] = {
+            sequence: JSON.parse(JSON.stringify(url_collection.sequence)),
+            fillSequence: JSON.parse(JSON.stringify(url_collection.fillSequence)),
+            fillActive: url_collection.fillActive || false,
+            muted: JSON.parse(JSON.stringify(url_collection.muted || {})),
+            rhythm: url_collection.rhythm || '4/4',
+            tempo: url_collection.tempo || 90,
+            swing: url_collection.swing || false,
+            sound: url_collection.sound || 'standard',
+            steps: numSteps
+          }
           localStorage.setItem('drum_saved_presets', JSON.stringify(saved))
           this.populatePresetSelect()
         },
